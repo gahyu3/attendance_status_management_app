@@ -1,0 +1,45 @@
+services:
+  # Railsのコンテナ
+  backend:
+    build:
+      context: ./backend
+
+    command: bundle exec rails s -p 3000 -b '0.0.0.0'
+
+    volumes:
+      - ./backend:/myapp
+
+    ports:
+      - 3000:3000
+
+    depends_on:
+      - db
+
+    tty: true
+
+    stdin_open: true
+  
+  frontend:
+    build: ./frontend
+    volumes:
+      - ./frontend:/app:cached
+    ports:
+      - "8000:8000"
+    tty: true
+
+  db:
+    image: postgres
+
+    environment:
+      POSTGRES_USER: 'user'
+      POSTGRES_PASSWORD: 'postgres'
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - 'postgres_data:/var/lib/postgresql/data'
+
+volumes:
+  postgres_data:
+

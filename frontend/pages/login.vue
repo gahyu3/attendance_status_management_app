@@ -1,0 +1,40 @@
+<template>
+  <v-main>
+    <v-container class="h-100 d-flex align-center justify-center">
+      <v-sheet
+        :elevation="11"
+        :width="500"
+        border
+        rounded
+        class="pa-10"
+      >
+      <div class="text-center mb-4">
+        <h1>ログイン</h1>
+      </div>
+        <v-form>
+          <v-text-field
+            label="メールアドレス"
+            placeholder="johndoe@gmail.com"
+            type="email"
+          ></v-text-field>
+          <v-text-field
+            label="パスワード"
+            placeholder="●●●●●●●"
+            type="password"
+          ></v-text-field>
+
+          <v-layout>
+            <v-btn
+                  class="mx-auto"
+                  color="success"
+                  size="large"
+                  type="submit"
+                >
+                  ログイン
+            </v-btn>
+          </v-layout>
+        </v-form>
+      </v-sheet>
+    </v-container>
+  </v-main>
+</template>

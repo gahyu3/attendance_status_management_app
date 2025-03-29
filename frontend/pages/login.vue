@@ -51,19 +51,43 @@ const form = ref({
   password: ""
 })
 
-const response = ref(null)
+const responseData = ref(null)
 const errorMessage = ref("")
 
 const submitForm = async () => {
   try {
-    const res = await $fetch(`${config.public.apiBase}/api/v1/sign_in`, {
+    const response = await fetch(`${config.public.apiBase}/api/v1/sign_in`, {
       method: "POST",
-      body: form.value
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(form.value)
     })
-    response.value = res
-    errorMessage.value= ""
+
+    const resData = await response.json()
+
+    const accessToken = response.headers.get("access-token")
+    const client = response.headers.get("client")
+    const uid = response.headers.get("uid")
+
+    if (accessToken && client && uid) {
+      // トークンが存在する場合、sessionStorageに保存
+      sessionStorage.setItem('access-token', accessToken)
+      sessionStorage.setItem('client', client)
+      sessionStorage.setItem('uid', uid)
+      responseData.value = resData
+      errorMessage.value = ""
+    } else {
+      throw new Error('tokenがありません')
+    }
+
+    console.log(accessToken)
+    console.log(client)
+    console.log(uid)
+
   } catch (error) {
-    errorMessage.value = error.data.errors.join(', ')
+    console.error(error)
+    errorMessage.value = error.message
   }
 }
 </script>

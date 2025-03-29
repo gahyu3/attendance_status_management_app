@@ -44,6 +44,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import { navigateTo } from "nuxt/app";
 const config = useRuntimeConfig()
 
 const form = ref({
@@ -77,6 +78,8 @@ const submitForm = async () => {
       sessionStorage.setItem('uid', uid)
       responseData.value = resData
       errorMessage.value = ""
+
+      navigateTo("/dashboard");
     } else {
       throw new Error('tokenがありません')
     }

@@ -20,5 +20,10 @@ export default defineNuxtConfig({
         transformAssetUrls,
       },
     },
+  },
+  runtimeConfig: {
+    public: {
+      apiBase: ""
+    }
   }
 })

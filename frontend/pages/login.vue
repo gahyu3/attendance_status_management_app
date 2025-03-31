@@ -67,26 +67,22 @@ const submitForm = async () => {
 
     const resData = await response.json()
 
-    const accessToken = response.headers.get("access-token")
-    const client = response.headers.get("client")
-    const uid = response.headers.get("uid")
+    const accessToken = useCookie('access-token', { maxAge: 60 * 60 * 24, secure: true })
+    const client = useCookie('client', { maxAge: 60 * 60 * 24, secure: true })
+    const uid = useCookie('uid', { maxAge: 60 * 60 * 24, secure: true })
 
     if (accessToken && client && uid) {
       // トークンが存在する場合、sessionStorageに保存
-      sessionStorage.setItem('access-token', accessToken)
-      sessionStorage.setItem('client', client)
-      sessionStorage.setItem('uid', uid)
+      accessToken.value = response.headers.get('access-token')
+      client.value = response.headers.get('client')
+      uid.value = response.headers.get('uid')
       responseData.value = resData
       errorMessage.value = ""
 
-      navigateTo("/dashboard");
+      return navigateTo("/dashboard");
     } else {
       throw new Error('tokenがありません')
     }
-
-    console.log(accessToken)
-    console.log(client)
-    console.log(uid)
 
   } catch (error) {
     console.error(error)

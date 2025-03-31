@@ -1,6 +1,7 @@
 <template>
   <p>ログイン成功</p>
   <v-btn @click="logout">ログアウト</v-btn>
+  
 </template>
 
 <script setup>

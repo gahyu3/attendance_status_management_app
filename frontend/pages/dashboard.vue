@@ -1,7 +1,22 @@
 <template>
-  <p>ログイン成功</p>
-  <v-btn @click="logout">ログアウト</v-btn>
-  
+  <v-app-bar color="primary" height="100">
+      <v-app-bar-title>
+        Application
+      </v-app-bar-title>
+      <v-btn @click="logout">ログアウト</v-btn>
+    </v-app-bar>
+
+    <v-navigation-drawer :width="300">
+      <v-list-item title="Group"></v-list-item>
+      <v-divider></v-divider>
+      <v-list-item link title="List Item 1"></v-list-item>
+      <v-list-item link title="List Item 2"></v-list-item>
+      <v-list-item link title="List Item 3"></v-list-item>
+    </v-navigation-drawer>
+
+    <v-main>
+    </v-main>
+
 </template>
 
 <script setup>

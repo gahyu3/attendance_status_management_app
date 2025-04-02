@@ -3,9 +3,12 @@
       <v-app-bar-title>
         Application
       </v-app-bar-title>
+    <template v-slot:append>
+      <v-icon icon="mdi-account-circle" size="x-large" start />
       {{ currentUser.user_name }}
       <v-btn @click="logout">ログアウト</v-btn>
-    </v-app-bar>
+    </template>
+  </v-app-bar>
 
     <v-navigation-drawer permanent>
       <v-list-item title="Group"></v-list-item>

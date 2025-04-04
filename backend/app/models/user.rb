@@ -2,6 +2,8 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable, :recoverable, :rememberable
   include DeviseTokenAuth::Concerns::User
 
+  has_many :attendances, dependent: :destroy
+
   has_many :group_memberships
   has_many :groups, through: :group_memberships
 

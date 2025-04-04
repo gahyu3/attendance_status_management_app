@@ -20,3 +20,5 @@ User.find_each do |user|
     user.join_group(group)
   end
 end
+
+

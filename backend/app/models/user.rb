@@ -3,6 +3,7 @@ class User < ApplicationRecord
   include DeviseTokenAuth::Concerns::User
 
   has_many :attendances, dependent: :destroy
+  has_many :attending_group, through: :attendances, source: :group
 
   has_many :group_memberships
   has_many :groups, through: :group_memberships

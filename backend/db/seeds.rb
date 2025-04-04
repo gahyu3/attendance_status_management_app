@@ -14,3 +14,9 @@ Group.create!([
   { name: "勉強会２" },
   { name: "もくもく会" }
 ])
+
+User.find_each do |user|
+  Group.find_each do |group|
+    user.join_group(group)
+  end
+end

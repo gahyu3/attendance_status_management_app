@@ -8,7 +8,7 @@ class User < ApplicationRecord
   has_many :group_memberships
   has_many :groups, through: :group_memberships
 
-  validates :user_name, presence: true, length: { maximum: 20 }
+  validates :user_name, presence: true, length: { maximum: 30 }
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
 
   def join_group(group)

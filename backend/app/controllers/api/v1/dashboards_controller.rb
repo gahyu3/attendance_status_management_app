@@ -11,8 +11,6 @@ class Api::V1::DashboardsController < ApplicationController
         render json: { error: "Group not found" }, status: :not_found
       end
     end
-      groups = Group.all
-      render json: { groups: groups }
   end
 
 end

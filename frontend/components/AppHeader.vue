@@ -15,12 +15,6 @@
 import { ref, onMounted } from 'vue';
 const config = useRuntimeConfig()
 
-definePageMeta({
-  middleware: [
-    "auth",
-  ],
-});
-
 const accessToken = useCookie("access-token")
 const client = useCookie("client")
 const uid = useCookie("uid")

@@ -44,7 +44,7 @@ async function getGroupsFetch() {
   }
 }
 
-const groupName = ref("")
+const groupUserAttendancesData = useState("groupUserAttendancesData", () => null);
 const today = new Date()
 const formatToday = today.toISOString().split('T')[0]
 const day = ref(formatToday)
@@ -65,8 +65,8 @@ async function getGroupUserFetch(name, day) {
     if (!response.ok) throw new Error('ネットワークエラー');
 
     const data = await response.json();
-    console.log(data);
-    groupName.value = data;
+    console.log(data.group_user_attendances);
+    groupUserAttendancesData.value = data.group_user_attendances;
   } catch (error) {
     console.error('エラー:', error);
   }

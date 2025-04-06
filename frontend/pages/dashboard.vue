@@ -3,6 +3,7 @@
   <AppHeader />
   <SideBar />
   <v-main>
+    {{ groupUserAttendancesData }}
   </v-main>
 
 </template>
@@ -13,5 +14,7 @@ definePageMeta({
     "auth",
   ],
 });
+
+const groupUserAttendancesData = useState("groupUserAttendancesData");
 
 </script>

@@ -26,7 +26,7 @@ const uid = useCookie("uid")
 
 async function groupsFetch() {
   try {
-    const response = await fetch(`${config.public.apiBase}/api/v1/dashboards`, {
+    const response = await fetch(`${config.public.apiBase}/api/v1/groups`, {
       headers: {
         "access-token": accessToken.value,
         "client": client.value,

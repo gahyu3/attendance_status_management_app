@@ -1,11 +1,12 @@
 <template>
   <v-navigation-drawer permanent>
-    <v-list-item title="Group"></v-list-item>
+    <v-list-item title="グループ"></v-list-item>
     <v-divider></v-divider>
-    <li v-for="item in groups">
-      {{ item.name }}
-    </li>
-  {{ groups }}
+    <v-list>
+      <v-list-item link v-for="group in groups" :key="group.id">
+        <v-list-item-title>{{ group.name }}</v-list-item-title>
+      </v-list-item>
+    </v-list>
   </v-navigation-drawer>
 </template>
 

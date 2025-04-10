@@ -44,7 +44,7 @@ async function getGroupsFetch() {
   }
 }
 
-const groupUserAttendancesData = useState("groupUserAttendancesData", () => null);
+const groupUserAttendancesData = useState("groupUserAttendancesData", () => "");
 const today = new Date()
 const formatToday = today.toISOString().split('T')[0]
 const day = ref(formatToday)

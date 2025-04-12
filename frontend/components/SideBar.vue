@@ -7,14 +7,12 @@
         <v-list-item-title>{{ group.name }}</v-list-item-title>
       </v-list-item>
     </v-list>
-    {{ day }}
   </v-navigation-drawer>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
 const config = useRuntimeConfig()
-
 const groups = ref([])
 
 const activeIndex = ref(0);

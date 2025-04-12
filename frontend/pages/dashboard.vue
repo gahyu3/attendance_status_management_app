@@ -3,6 +3,7 @@
   <AppHeader />
   <SideBar />
   <v-main>
+    <DateField />
     <div v-if="groupUserAttendancesData">
       <v-data-table :headers="headers" :items="groupUserAttendancesData">
         <template #item.user="{ item }">

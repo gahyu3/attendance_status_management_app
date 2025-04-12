@@ -17,7 +17,7 @@ const selectedDate = ref(today)
 const date = useDate()
 const formatted = computed(() => {
   return selectedDate.value
-    ? date.format(new Date(selectedDate.value), 'keyboardDate')
+    ? date.toISO(new Date(selectedDate.value))
     : ''
 })
 

@@ -7,6 +7,7 @@
         <v-list-item-title>{{ group.name }}</v-list-item-title>
       </v-list-item>
     </v-list>
+    {{ day }}
   </v-navigation-drawer>
 </template>
 

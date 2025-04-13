@@ -1,7 +1,7 @@
 <template>
   <v-menu :close-on-content-click="false">
     <template v-slot:activator="{ props }">
-      <v-btn v-bind="props" class="cursor-pointer">{{ formatted }}</v-btn>
+      <v-btn v-bind="props" class="cursor-pointer">{{ formatDate }}</v-btn>
     </template>
     <v-date-picker v-model="selectedDate" color="primary"></v-date-picker>
   </v-menu>
@@ -9,19 +9,19 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useDate } from 'vuetify'
+import { ref, computed } from 'vue';
 
-const today = new Date()
-const selectedDate = ref(today)
-const date = useDate()
-const formatted = computed(() => {
-  return selectedDate.value
-    ? date.toISO(new Date(selectedDate.value))
-    : ''
+const { selectedDate } = useDatePicker()
+
+const formatDate = computed(() => {
+  return new Date(selectedDate.value).toLocaleDateString('ja-JP', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    })
 })
 
 function GetToday() {
-  selectedDate.value = today
+  selectedDate.value = new Date()
 }
 </script>

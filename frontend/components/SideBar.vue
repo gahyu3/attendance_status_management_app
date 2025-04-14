@@ -3,7 +3,7 @@
     <v-list-item title="グループ"></v-list-item>
     <v-divider></v-divider>
     <v-list>
-      <v-list-item v-for="(group, index) in groups" :key="group.id" :value="group.name" :active="index === activeIndex" @click="getGroupUserFetch(group.name, selectedDate), setActive(index)">
+      <v-list-item v-for="(group, index) in groups" :key="group.id" :value="group.name" :active="index === activeIndex" @click="getGroupUserFetch(group.name, selectedDate), setActive(index), setGroup(group.name)">
         <v-list-item-title>{{ group.name }}</v-list-item-title>
       </v-list-item>
     </v-list>
@@ -21,10 +21,17 @@ function setActive(index) {
   activeIndex.value = index;
 }
 
+const groupName = useState("groupName", () => "");
+
+function setGroup(name) {
+  groupName.value = name
+}
+
 onMounted(async () => {
   await getGroupsFetch();
   if (groups.value.length > 0) {
     await getGroupUserFetch(groups.value[0].name, selectedDate.value);
+    setGroup(groups.value[0].name)
   } else {
     console.warn('グループデータが空です');
   }
@@ -79,5 +86,6 @@ async function getGroupUserFetch(name, day) {
     console.error('エラー:', error);
   }
 }
+
 
 </script>

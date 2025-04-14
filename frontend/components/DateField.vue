@@ -10,6 +10,7 @@
 
 <script setup>
 import { ref, computed } from 'vue';
+const groupName = useState("groupName");
 
 const { selectedDate } = useDatePicker()
 

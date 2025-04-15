@@ -1,9 +1,16 @@
 export function useDatePicker() {
-  const now = new Date()
+  const selectedDate = useState('selectedDate', () => new Date())
 
-  const selectedDate = useState('selectedDate', () => now)
+  const formatDate = computed(() => {
+    return selectedDate.value.toLocaleDateString('ja-JP', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).replaceAll('/', '-')
+  })
 
   return {
     selectedDate,
+    formatDate,
   }
 }

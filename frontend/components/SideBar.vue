@@ -3,7 +3,13 @@
     <v-list-item title="グループ"></v-list-item>
     <v-divider></v-divider>
     <v-list>
-      <v-list-item v-for="(group, index) in groups" :key="group.id" :value="group.name" :active="index === activeIndex" @click="getGroupUserFetch(group.name, selectedDate), setActive(index), setGroup(group.name)">
+      <v-list-item v-for="(group, index) in groups"
+                  :key="group.id"
+                  :value="group.name"
+                  :active="index === activeIndex"
+                  @click="onClickGroupUsers(group.name, formatDate),
+                  setActive(index),
+                  setGroup(group.name)">
         <v-list-item-title>{{ group.name }}</v-list-item-title>
       </v-list-item>
     </v-list>
@@ -12,80 +18,83 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
+
 const config = useRuntimeConfig()
+
+// 日付関連の state を取得（選択中の日付とそのフォーマット）
+const { selectedDate, formatDate } = useDatePicker()
+
+// グループ一覧
 const groups = ref([])
 
+// 現在選択されているグループ名
+const selectedGroup = useState("groupName", () => "");
+
+// 現在アクティブなグループのインデックス
 const activeIndex = ref(0);
 
+// 出席データの格納用（useState を利用してグローバルに保持）
+const groupUserAttendancesData = useState("groupUserAttendancesData", () => null);
+
+// グループ別ユーザー出席データ取得用
+const { getData: groupUsersData,
+        getFetch: groupUsersFetch
+      } = useGetFetch(`${config.public.apiBase}/api/v1/dashboards`)
+
+// グループ一覧データ取得用
+const { getData: groupsData,
+        getFetch: groupsFetch
+      } = useGetFetch(`${config.public.apiBase}/api/v1/groups`)
+
+// アクティブなインデックスをセット
 function setActive(index) {
   activeIndex.value = index;
 }
 
-const groupName = useState("groupName", () => "");
-
+// 現在選択中のグループ名をセット
 function setGroup(name) {
-  groupName.value = name
+  selectedGroup.value = name
 }
 
+// 初回マウント時にグループと出席データを取得
 onMounted(async () => {
-  await getGroupsFetch();
+  await groupsFetch();
+  if (groupsData.value) {
+    groups.value = groupsData.value.groups
+  }
   if (groups.value.length > 0) {
-    await getGroupUserFetch(groups.value[0].name, selectedDate.value);
+    await groupUsersFetch({
+      query: {
+        name: groups.value[0].name,
+        date: formatDate.value
+      }
+    });
+    if (groupUsersData.value?.group_user_attendances) {
+      groupUserAttendancesData.value = groupUsersData.value.group_user_attendances;
+    } else {
+      console.warn('group_user_attendances の取得に失敗しました');
+    }
+
     setGroup(groups.value[0].name)
   } else {
     console.warn('グループデータが空です');
   }
 });
 
-const accessToken = useCookie("access-token")
-const client = useCookie("client")
-const uid = useCookie("uid")
-
-async function getGroupsFetch() {
-  try {
-    const response = await fetch(`${config.public.apiBase}/api/v1/groups`, {
-      headers: {
-        "access-token": accessToken.value,
-        "client": client.value,
-        "uid": uid.value
-      }
-    });
-    if (!response.ok) throw new Error('ネットワークエラー');
-
-    const data = await response.json();
-    console.log(data.groups);
-    groups.value = data.groups;
-  } catch (error) {
-    console.error('エラー:', error);
-  }
-}
-
-const groupUserAttendancesData = useState("groupUserAttendancesData", () => "");
-
-const { selectedDate } = useDatePicker()
-
-async function getGroupUserFetch(name, day) {
-  try {
-    const params = new URLSearchParams({
+// グループ名と日付を指定して出席データを取得（クリックイベント用）
+async function onClickGroupUsers(name, day) {
+  await groupUsersFetch({
+    query: {
       name: name,
       date: day
-    })
-    const response = await fetch(`${config.public.apiBase}/api/v1/dashboards?${params}`, {
-      headers: {
-        "access-token": accessToken.value,
-        "client": client.value,
-        "uid": uid.value
-      }
-    });
-    if (!response.ok) throw new Error('ネットワークエラー');
+    }
+  })
 
-    const data = await response.json();
-    console.log(data.group_user_attendances);
-    groupUserAttendancesData.value = data.group_user_attendances;
-  } catch (error) {
-    console.error('エラー:', error);
+  if (groupUsersData.value.group_user_attendances) {
+    groupUserAttendancesData.value = groupUsersData.value.group_user_attendances
+  } else {
+    console.warn('出席データが見つかりません');
   }
 }
-
 
 </script>

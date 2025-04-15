@@ -34,5 +34,4 @@ const headers = [
 ];
 
 const groupUserAttendancesData = useState("groupUserAttendancesData");
-
 </script>

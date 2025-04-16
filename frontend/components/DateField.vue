@@ -1,7 +1,9 @@
 <template>
   <v-menu :close-on-content-click="false">
     <template v-slot:activator="{ props }">
-      <v-btn v-bind="props" class="cursor-pointer">{{ formatted }}</v-btn>
+      <v-btn v-bind="props" class="cursor-pointer">
+        <client-only>{{ formatDate }}</client-only>
+      </v-btn>
     </template>
     <v-date-picker v-model="selectedDate" color="primary"></v-date-picker>
   </v-menu>
@@ -9,19 +11,35 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useDate } from 'vuetify'
+import { ref, watch } from 'vue';
 
-const today = new Date()
-const selectedDate = ref(today)
-const date = useDate()
-const formatted = computed(() => {
-  return selectedDate.value
-    ? date.format(new Date(selectedDate.value), 'keyboardDate')
-    : ''
-})
+const config = useRuntimeConfig()
 
+const { selectedDate, formatDate } = useDatePicker()
+const selectedGroup = useState("selectedGroup");
+const groupUserAttendancesData = useState("groupUserAttendancesData");
+
+// 現在の日付を獲得
 function GetToday() {
-  selectedDate.value = today
+  selectedDate.value = new Date()
 }
+
+// グループ別ユーザー出席データ取得用
+const { getData: groupUsersData,
+        getFetch: groupUsersFetch
+      } = useGetFetch(`${config.public.apiBase}/api/v1/dashboards`)
+
+watch(formatDate, async () => {
+  await groupUsersFetch({
+          query: {
+            name: selectedGroup.value,
+            date: formatDate.value,
+          }
+        })
+  if (groupUsersData.value?.group_user_attendances) {
+    groupUserAttendancesData.value = groupUsersData.value.group_user_attendances
+  } else {
+    console.warn('出席データが見つかりません');
+  }
+});
 </script>

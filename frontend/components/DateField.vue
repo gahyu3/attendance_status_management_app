@@ -1,7 +1,9 @@
 <template>
   <v-menu :close-on-content-click="false">
     <template v-slot:activator="{ props }">
-      <v-btn v-bind="props" class="cursor-pointer">{{ formatDate }}</v-btn>
+      <v-btn v-bind="props" class="cursor-pointer">
+        <client-only>{{ formatDate }}</client-only>
+      </v-btn>
     </template>
     <v-date-picker v-model="selectedDate" color="primary"></v-date-picker>
   </v-menu>
@@ -9,18 +11,9 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-const groupName = useState("groupName");
+import { ref } from 'vue';
 
-const { selectedDate } = useDatePicker()
-
-const formatDate = computed(() => {
-  return new Date(selectedDate.value).toLocaleDateString('ja-JP', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    })
-})
+const { selectedDate, formatDate } = useDatePicker()
 
 function GetToday() {
   selectedDate.value = new Date()

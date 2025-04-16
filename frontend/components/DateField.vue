@@ -11,11 +11,35 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
+
+const config = useRuntimeConfig()
 
 const { selectedDate, formatDate } = useDatePicker()
+const selectedGroup = useState("selectedGroup");
+const groupUserAttendancesData = useState("groupUserAttendancesData");
 
+// 現在の日付を獲得
 function GetToday() {
   selectedDate.value = new Date()
 }
+
+// グループ別ユーザー出席データ取得用
+const { getData: groupUsersData,
+        getFetch: groupUsersFetch
+      } = useGetFetch(`${config.public.apiBase}/api/v1/dashboards`)
+
+watch(formatDate, async () => {
+  await groupUsersFetch({
+          query: {
+            name: selectedGroup.value,
+            date: formatDate.value,
+          }
+        })
+  if (groupUsersData.value?.group_user_attendances) {
+    groupUserAttendancesData.value = groupUsersData.value.group_user_attendances
+  } else {
+    console.warn('出席データが見つかりません');
+  }
+});
 </script>

@@ -28,7 +28,7 @@ const { selectedDate, formatDate } = useDatePicker()
 const groups = ref([])
 
 // 現在選択されているグループ名
-const selectedGroup = useState("groupName", () => "");
+const selectedGroup = useState("selectedGroup", () => "");
 
 // 現在アクティブなグループのインデックス
 const activeIndex = ref(0);

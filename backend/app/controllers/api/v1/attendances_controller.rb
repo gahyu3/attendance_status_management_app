@@ -2,11 +2,11 @@ class Api::V1::AttendancesController < ApplicationController
     before_action :authenticate_user!
 
     def create
-      attendance = Attendances.new(attendance_params)
+      attendance = Attendance.new(attendance_params)
       if attendance.save
-        render json: { attendances: attendances }, status: :ok
+        render json: { attendance: attendance }, status: :ok
       else
-        render json: { error: "失敗" }
+        render json: { error: attendance.errors.full_messages }
       end
     end
 

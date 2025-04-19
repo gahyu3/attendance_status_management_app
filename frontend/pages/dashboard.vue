@@ -15,7 +15,7 @@
           </v-btn>
         </template>
       </v-data-table>
-      <v-btn @click="fetchAttendance(formatDate, currentUser.id, selectedGroup.id)">+</v-btn>
+      <v-btn @click="createAttendance(formatDate, currentUser.id, selectedGroup.id)">+</v-btn>
     </div>
   </v-main>
 
@@ -46,10 +46,12 @@ const { getData: postAttendanceData,
         postFetch: postAttendanceFetch
       } = usePostFetch(`${config.public.apiBase}/api/v1/attendances`)
 
-async function fetchAttendance(date, user_id, group_id) {
+async function createAttendance(date, user_id, group_id) {
   await postAttendanceFetch(date, user_id, group_id)
 
-  groupUserAttendancesData.value = postAttendanceData.value
+  if (postAttendanceData.value) {
+    groupUserAttendancesData.value.push(postAttendanceData.value.attendance)
+  }
 }
 
 </script>

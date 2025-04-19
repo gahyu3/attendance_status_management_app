@@ -4,7 +4,7 @@ class Api::V1::AttendancesController < ApplicationController
     def create
       attendance = Attendance.new(attendance_params)
       if attendance.save
-        render json: { attendance: attendance }, status: :ok
+        render json: { attendance: attendance.as_json(include: :user) }, status: :ok
       else
         render json: { error: attendance.errors.full_messages }, status: :bad_request
       end
@@ -13,7 +13,7 @@ class Api::V1::AttendancesController < ApplicationController
     def update
       attendance = Attendance.find(params[:id])
       if attendance.update(attendance_params)
-        render json: { attendance: attendance }, status: :ok
+        render json: { attendance: attendance.as_json(include: :user) }, status: :ok
       else
         render json: { error: attendance.errors.full_messages }, status: :bad_request
       end

@@ -35,7 +35,7 @@ const selectedGroup = useState("selectedGroup", () => "");
 const activeIndex = ref(0);
 
 // 出席データの格納用（useState を利用してグローバルに保持）
-const groupUserAttendancesData = useState("groupUserAttendancesData", () => null);
+const groupUserAttendancesData = useState("groupUserAttendancesData", () => []);
 
 // グループ別ユーザー出席データ取得用
 const { getData: groupUsersData,

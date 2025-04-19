@@ -13,6 +13,7 @@ export default function usePostFetch(url) {
     const attendanceParams = {
       attendance: {
         date: date,
+        remarks: "",
         user_id: user_id,
         group_id: group_id,
         }

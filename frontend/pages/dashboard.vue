@@ -15,12 +15,19 @@
           </v-btn>
         </template>
       </v-data-table>
+      <v-btn @click="fetchAttendance(formatDate, currentUser.id, selectedGroup.id)">+</v-btn>
     </div>
   </v-main>
 
 </template>
 
 <script setup>
+import { ref } from 'vue';
+const config = useRuntimeConfig()
+const currentUser = useState("currentUser");
+const selectedGroup = useState("selectedGroup");
+const { formatDate } = useDatePicker()
+
 definePageMeta({
   middleware: [
     "auth",
@@ -34,4 +41,15 @@ const headers = [
 ];
 
 const groupUserAttendancesData = useState("groupUserAttendancesData");
+
+const { getData: postAttendanceData,
+        postFetch: postAttendanceFetch
+      } = usePostFetch(`${config.public.apiBase}/api/v1/attendances`)
+
+async function fetchAttendance(date, user_id, group_id) {
+  await postAttendanceFetch(date, user_id, group_id)
+
+  groupUserAttendancesData.value = postAttendanceData.value
+}
+
 </script>

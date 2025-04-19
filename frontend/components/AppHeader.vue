@@ -45,7 +45,7 @@ const logout = async () => {
   }
 }
 
-const currentUser = ref({});
+const currentUser = useState("currentUser", () => "");
 
 // マウント時にログインユーザーを獲得
 onMounted(() => {

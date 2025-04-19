@@ -9,7 +9,7 @@ class Attendance < ApplicationRecord
   validates :remarks, length: { maximum: 20 }
   validates :user_id, presence: true
   validates :group_id, presence: true
-  validate  :unique_user_group_date_combination
+  validate  :unique_user_group_date_combination, on: create
 
   #同じ日に同じユーザーが同じグループに複数回出席登録されるのを防ぐ
   def unique_user_group_date_combination

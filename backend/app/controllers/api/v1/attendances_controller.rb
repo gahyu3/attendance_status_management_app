@@ -10,6 +10,15 @@ class Api::V1::AttendancesController < ApplicationController
       end
     end
 
+    def update
+      attendance = Attendance.find(params[:id])
+      if attendance.update(attendance_params)
+        render json: { attendance: attendance }, status: :ok
+      else
+        render json: { error: attendance.errors.full_messages }, status: :bad_request
+      end
+    end
+
     def destroy
       attendance = Attendance.find(params[:id])
       attendance.destroy!

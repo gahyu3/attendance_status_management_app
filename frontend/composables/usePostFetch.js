@@ -9,15 +9,7 @@ export default function usePostFetch(url) {
 
   const getData = ref(null)
 
-  async function postFetch(date, user_id, group_id) {
-    const attendanceParams = {
-      attendance: {
-        date: date,
-        remarks: "",
-        user_id: user_id,
-        group_id: group_id,
-        }
-      }
+  async function postFetch( { query = {} } = {} ) {
 
     try {
       const response = await fetch(url, {
@@ -28,7 +20,7 @@ export default function usePostFetch(url) {
           "uid": uid.value,
           "Content-Type": "application/json"
         },
-        body: JSON.stringify(attendanceParams)
+        body: query ? JSON.stringify(query) : ""
       });
 
       if (!response.ok) throw new Error('ネットワークエラー');

@@ -44,14 +44,26 @@ const groupUserAttendancesData = useState("groupUserAttendancesData");
 
 const { getData: postAttendanceData,
         postFetch: postAttendanceFetch
-      } = usePostFetch(`${config.public.apiBase}/api/v1/attendances`)
+      } = usePostFetch(`${config.public.apiBase}/api/v1/attendances`);
 
 async function createAttendance(date, user_id, group_id) {
-  await postAttendanceFetch(date, user_id, group_id)
+
+  const attendanceParams =
+    { query: {
+        attendance: {
+          date: date,
+          remarks: "",
+          user_id: user_id,
+          group_id: group_id,
+          }
+        }
+    };
+
+  await postAttendanceFetch(attendanceParams)
 
   if (postAttendanceData.value) {
     groupUserAttendancesData.value.push(postAttendanceData.value.attendance)
   }
-}
+};
 
 </script>

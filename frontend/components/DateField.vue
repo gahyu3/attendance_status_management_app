@@ -32,7 +32,7 @@ const { getData: groupUsersData,
 watch(formatDate, async () => {
   await groupUsersFetch({
           query: {
-            name: selectedGroup.value,
+            name: selectedGroup.value.name,
             date: formatDate.value,
           }
         })

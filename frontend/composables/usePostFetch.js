@@ -9,24 +9,27 @@ export default function usePostFetch(url) {
 
   const getData = ref(null)
 
-  async function getFetch({ query = {} } = {}) {
-    const queryString = new URLSearchParams(query).toString()
+  async function postFetch(request, queryParameterID = null, options = {} ) {
+    const fullUrl = queryParameterID ? `${url}/${queryParameterID}` : `${url}`
+    const { query = {} } = options
 
-    const fullUrl = queryString ? `${url}?${queryString}` : `${url}`
     try {
       const response = await fetch(fullUrl, {
+        method: request,
         headers: {
           "access-token": accessToken.value,
           "client": client.value,
-          "uid": uid.value
-        }
+          "uid": uid.value,
+          "Content-Type": "application/json"
+        },
+        body: query ? JSON.stringify(query) : ""
       });
 
       if (!response.ok) throw new Error('ネットワークエラー');
 
       const resData = await response.json();
       getData.value = resData
-      console.log(resData);
+      console.log(resData, "出席状況作成");
     } catch (error) {
       console.error('エラー:', error);
     }
@@ -35,6 +38,6 @@ export default function usePostFetch(url) {
 
   return {
     getData,
-    getFetch,
+    postFetch,
   }
 }

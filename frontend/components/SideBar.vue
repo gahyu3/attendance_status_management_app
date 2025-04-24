@@ -9,7 +9,7 @@
                   :active="index === activeIndex"
                   @click="onClickGroupUsers(group.name, formatDate),
                   setActive(index),
-                  setGroup(group.name)">
+                  setGroup(group)">
         <v-list-item-title>{{ group.name }}</v-list-item-title>
       </v-list-item>
     </v-list>
@@ -27,14 +27,15 @@ const { selectedDate, formatDate } = useDatePicker()
 // グループ一覧
 const groups = ref([])
 
-// 現在選択されているグループ名
+// 現在選択されているグループ情報
 const selectedGroup = useState("selectedGroup", () => "");
+
 
 // 現在アクティブなグループのインデックス
 const activeIndex = ref(0);
 
 // 出席データの格納用（useState を利用してグローバルに保持）
-const groupUserAttendancesData = useState("groupUserAttendancesData", () => null);
+const groupUserAttendancesData = useState("groupUserAttendancesData", () => []);
 
 // グループ別ユーザー出席データ取得用
 const { getData: groupUsersData,
@@ -52,8 +53,8 @@ function setActive(index) {
 }
 
 // 現在選択中のグループ名をセット
-function setGroup(name) {
-  selectedGroup.value = name
+function setGroup(group) {
+  selectedGroup.value = group
 }
 
 // 初回マウント時にグループと出席データを取得
@@ -75,7 +76,7 @@ onMounted(async () => {
       console.warn('group_user_attendances の取得に失敗しました');
     }
 
-    setGroup(groups.value[0].name)
+    setGroup(groups.value[0])
   } else {
     console.warn('グループデータが空です');
   }

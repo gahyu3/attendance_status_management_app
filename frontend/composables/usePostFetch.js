@@ -9,11 +9,13 @@ export default function usePostFetch(url) {
 
   const getData = ref(null)
 
-  async function postFetch( { query = {} } = {} ) {
+  async function postFetch(request, queryParameterID = null, options = {} ) {
+    const fullUrl = queryParameterID ? `${url}/${queryParameterID}` : `${url}`
+    const { query = {} } = options
 
     try {
-      const response = await fetch(url, {
-        method: "POST",
+      const response = await fetch(fullUrl, {
+        method: request,
         headers: {
           "access-token": accessToken.value,
           "client": client.value,

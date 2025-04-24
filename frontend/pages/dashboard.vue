@@ -10,9 +10,7 @@
           {{ item.user.user_name }}
         </template>
         <template #item.attendances_status="{ item }">
-          <v-btn>
-            {{ item.attendances_status }}
-          </v-btn>
+          <AttendancesStatusBtn :item="item"  />
         </template>
       </v-data-table>
       <v-btn @click="createAttendance(formatDate, currentUser.id, selectedGroup.id)">+</v-btn>
@@ -59,7 +57,7 @@ async function createAttendance(date, user_id, group_id) {
         }
     };
 
-  await postAttendanceFetch(attendanceParams)
+  await postAttendanceFetch("POST", null,attendanceParams)
 
   if (postAttendanceData.value) {
     groupUserAttendancesData.value.push(postAttendanceData.value.attendance)

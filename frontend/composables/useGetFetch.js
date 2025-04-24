@@ -11,8 +11,8 @@ export default function useGetFetch(url) {
 
   async function getFetch({ query = {} } = {}) {
     const queryString = new URLSearchParams(query).toString()
-
     const fullUrl = queryString ? `${url}?${queryString}` : `${url}`
+  
     try {
       const response = await fetch(fullUrl, {
         headers: {

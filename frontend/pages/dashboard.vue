@@ -10,7 +10,10 @@
           {{ item.user.user_name }}
         </template>
         <template #item.attendances_status="{ item }">
-          <AttendancesStatusBtn :item="item"  />
+          <AttendancesStatusBtn :item="item" />
+        </template>
+        <template #item.destroy="{ item }">
+          <AttendancesDestroyBtn :item="item" v-if="isUserCurrentUser(item.user_id)"/>
         </template>
       </v-data-table>
       <v-btn @click="createAttendance(formatDate, currentUser.id, selectedGroup.id)">+</v-btn>
@@ -35,8 +38,13 @@ definePageMeta({
 const headers = [
   { title: "名前", value: "user" },
   { title: "予定", value: "schedule" },
-  { title: "出席状況", value: "attendances_status" }
+  { title: "出席状況", value: "attendances_status" },
+  { title: "", value: "destroy" }
 ];
+
+function isUserCurrentUser(userId) {
+  return userId === currentUser.value.id
+};
 
 const groupUserAttendancesData = useState("groupUserAttendancesData");
 

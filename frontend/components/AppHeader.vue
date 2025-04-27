@@ -4,7 +4,7 @@
         Application
       </v-app-bar-title>
     <template v-slot:append>
-      <v-icon icon="mdi-account-circle" size="x-large" start />
+      <Avatar :avatarImageUrl="currentUser?.avatar_image?.url"/>
       {{ currentUser.user_name }}
       <v-btn @click="logout">ログアウト</v-btn>
     </template>

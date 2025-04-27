@@ -1,9 +1,12 @@
+images = ["dog.jpg", "cat.jpg", "bird.jpg"]
+image_dir = Rails.root.join("db", "image")
+
 10.times do
   User.create!(
     user_name: Faker::Name.name,
     email: Faker::Internet.unique.email,
     password: 'password123',
-    avatar_image: Faker::Avatar.image,
+    avatar_image: File.open(image_dir.join(images.sample)),
     uid: Faker::Internet.uuid,
     provider: 'email',
   )

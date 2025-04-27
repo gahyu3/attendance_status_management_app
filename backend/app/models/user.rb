@@ -2,6 +2,8 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable, :recoverable, :rememberable
   include DeviseTokenAuth::Concerns::User
 
+  mount_uploader :avatar_image, AvatarImageUploader
+
   has_many :attendances, dependent: :destroy
   has_many :attending_group, through: :attendances, source: :group
 

@@ -6,6 +6,9 @@
     <DateField />
     <div v-if="groupUserAttendancesData">
       <v-data-table :headers="headers" :items="groupUserAttendancesData">
+        <template #item.avatar="{ item }">
+          <Avatar :avatarImageUrl="item.user?.avatar_image?.url"/>
+        </template>
         <template #item.user="{ item }">
           {{ item.user.user_name }}
         </template>
@@ -36,6 +39,7 @@ definePageMeta({
 });
 
 const headers = [
+  { title: "", value: "avatar"},
   { title: "名前", value: "user" },
   { title: "予定", value: "schedule" },
   { title: "出席状況", value: "attendances_status" },

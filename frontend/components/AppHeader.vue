@@ -4,7 +4,7 @@
         Application
       </v-app-bar-title>
     <template v-slot:append>
-      <Avatar :userImageUrl="currentUser?.avatar_image?.url"/>
+      <Avatar :avatarImageUrl="currentUser?.avatar_image?.url"/>
       {{ currentUser.user_name }}
       <v-btn @click="logout">ログアウト</v-btn>
     </template>

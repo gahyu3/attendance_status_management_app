@@ -1,6 +1,6 @@
 <template>
-  <v-avatar v-if="userImageUrl"
-            :image="`${config.public.apiBase}${userImageUrl}`"
+  <v-avatar v-if="avatarImageUrl"
+            :image="`${config.public.apiBase}${avatarImageUrl}`"
             size="32"
             start/>
   <v-icon v-else icon="mdi-account-circle" size="x-large" start/>
@@ -8,7 +8,7 @@
 
 <script setup>
 defineProps({
-  userImageUrl: ""
+  avatarImageUrl: ""
 })
 const config = useRuntimeConfig();
 

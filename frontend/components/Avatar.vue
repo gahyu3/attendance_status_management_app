@@ -1,19 +1,19 @@
 <template>
-  <v-avatar v-if="avatarImageUrl"
+  <v-avatar v-if="user?.avatar_image?.url"
             @click="dialog = true"
-            :image="`${config.public.apiBase}${avatarImageUrl}`"
+            :image="`${config.public.apiBase}${user?.avatar_image?.url}`"
             size="32"
             start/>
   <v-icon v-else
           @click="dialog = true"
           icon="mdi-account-circle"
           size="x-large" start/>
-  <ProfileModal v-model="dialog"/>
+  <ProfileModal v-model="dialog" :user="user"/>
 </template>
 
 <script setup>
 defineProps({
-  avatarImageUrl: ""
+  user: {},
 })
 const config = useRuntimeConfig();
 const dialog = ref(false)

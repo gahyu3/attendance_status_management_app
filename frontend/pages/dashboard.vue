@@ -7,7 +7,7 @@
     <div v-if="groupUserAttendancesData">
       <v-data-table :headers="headers" :items="groupUserAttendancesData">
         <template #item.avatar="{ item }">
-          <Avatar :avatarImageUrl="item.user?.avatar_image?.url"/>
+          <Avatar :user="item.user"/>
         </template>
         <template #item.user="{ item }">
           {{ item.user.user_name }}

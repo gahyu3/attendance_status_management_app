@@ -39,11 +39,13 @@ const props = defineProps({
 
 const config = useRuntimeConfig()
 const currentUser = useState("currentUser");
+const groupUserAttendancesData = useState("groupUserAttendancesData");
 
 const file = ref(null)
 const image = ref(null)
 const originalImage = ref(null)
 const editUser = reactive({
+  id: props.user?.id,
   user_name: props.user?.user_name
 })
 
@@ -62,6 +64,7 @@ watch(
 )
 
 function copyObject(user) {
+  editUser.id = user.id
   editUser.user_name = user.user_name
 }
 
@@ -100,6 +103,10 @@ async function profileEdit(userName) {
   if (userData) {
     currentUser.value = userData
     dialog.value = false
+    const attendance = groupUserAttendancesData.value.find(a => a.user.id === editUser.id)
+    if (attendance) {
+      attendance.user = userData
+    }
   }
 }
 

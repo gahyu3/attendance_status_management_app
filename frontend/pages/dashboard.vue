@@ -69,7 +69,7 @@ async function createAttendance(date, user_id, group_id) {
         }
     };
 
-  await postAttendanceFetch("POST", null,attendanceParams)
+  await postAttendanceFetch("POST", null, attendanceParams)
 
   if (postAttendanceData.value) {
     groupUserAttendancesData.value.push(postAttendanceData.value.attendance)

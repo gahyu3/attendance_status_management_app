@@ -8,7 +8,7 @@
           @click="dialog = true"
           icon="mdi-account-circle"
           size="x-large" start/>
-  <ProfileModal v-model="dialog" :user="user"/>
+  <ProfileModal v-model="dialog" :user="user" />
 </template>
 
 <script setup>

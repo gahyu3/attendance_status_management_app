@@ -1,19 +1,21 @@
 <template>
-  <v-navigation-drawer permanent>
-    <v-list-item title="グループ"></v-list-item>
-    <v-divider></v-divider>
-    <v-list>
-      <v-list-item v-for="(group, index) in groups"
-                  :key="group.id"
-                  :value="group.name"
-                  :active="index === activeIndex"
-                  @click="onClickGroupUsers(group.name, formatDate),
-                  setActive(index),
-                  setGroup(group)">
-        <v-list-item-title>{{ group.name }}</v-list-item-title>
-      </v-list-item>
-    </v-list>
-  </v-navigation-drawer>
+  <ClientOnly>
+    <v-navigation-drawer permanent>
+      <v-list-item title="グループ"></v-list-item>
+      <v-divider></v-divider>
+      <v-list>
+        <v-list-item v-for="(group, index) in groups"
+        :key="group.id"
+        :value="group.name"
+        :active="index === activeIndex"
+        @click="onClickGroupUsers(group.name, formatDate),
+                    setActive(index),
+                    setGroup(group)">
+          <v-list-item-title>{{ group.name }}</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
+  </ClientOnly>
 </template>
 
 <script setup>

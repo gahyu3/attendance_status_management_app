@@ -10,15 +10,17 @@
           <v-avatar :image="image" size="120"/>
         </div>
         <div class="d-flex justify-center pt-5 pb-5">
-          <v-btn text="アバター編集" @click="onInput"></v-btn>
+          <v-btn :disabled="user.id !== currentUser.id" text="アバター編集" @click="onInput"></v-btn>
         </div>
         <input type="file" ref="file" @change="prevImage" class="d-none"></input>
         <v-text-field v-model="editUser.user_name"
                       label="ユーザーネーム"
                       placeholder="太郎"
-                      type="text"></v-text-field>
-        <v-btn text="編集" type="submit"></v-btn>
-        <v-btn  class="ms-auto"
+                      type="text"
+                      :readonly="user.id !== currentUser.id"
+                      ></v-text-field>
+        <v-btn :disabled="user.id !== currentUser.id" text="編集" type="submit"></v-btn>
+        <v-btn class="ms-auto"
           text="閉じる"
           @click="dialog = false">
         </v-btn>

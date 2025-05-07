@@ -5,14 +5,14 @@
             style="max-width: 90vw;"
             title="ユーザー編集"
             class="pa-10">
-      <v-form @submit.prevent="profileEdit( editUser.user_name )">
+      <v-form @submit.prevent="profileEdit(editUser.user_name)">
         <div class="d-flex justify-center">
           <v-avatar :image="image" size="120"/>
         </div>
         <div class="d-flex justify-center pt-5 pb-5">
           <v-btn :disabled="user.id !== currentUser.id" text="アバター編集" @click="onInput"></v-btn>
         </div>
-        <input type="file" ref="file" @change="prevImage" class="d-none"></input>
+        <input type="file" ref="file" @change="prevImage" ></input>
         <v-text-field v-model="editUser.user_name"
                       label="ユーザーネーム"
                       placeholder="太郎"
@@ -24,6 +24,7 @@
           text="閉じる"
           @click="dialog = false">
         </v-btn>
+        {{ uploadFile }}
       </v-form>
     </v-card>
   </v-dialog>
@@ -43,6 +44,7 @@ const groupUserAttendancesData = useState("groupUserAttendancesData");
 
 const file = ref(null)
 const image = ref(null)
+const uploadFile = ref(null)
 const originalImage = ref(null)
 const editUser = reactive({
   id: props.user?.id,
@@ -75,11 +77,14 @@ function onInput() {
 // 選択した画像をプレビュー表示
 function prevImage(event) {
   const selectedFile = event.target.files[0]
+  console.log(selectedFile)
   if (selectedFile) {
     image.value = URL.createObjectURL(selectedFile)
-    console.log(image.value)
+    uploadFile.value = selectedFile
+    console.log(uploadFile.value)
   }
 }
+
 
 // ダイアログを閉じた時に元の画像を表示
 function onDialogToggle() {
@@ -95,7 +100,7 @@ async function profileEdit(userName) {
   const  userParams =
   { query: {
       user: {
-        user_name: userName
+        user_name: userName,
       }
     }
   }

@@ -16,7 +16,7 @@ class Api::V1::ProfilesController < ApplicationController
   private
 
   def profile_params
-    params.require(:user).permit(:user_name)
+    params.require(:user).permit(:user_name, :avatar_image)
   end
 
 end

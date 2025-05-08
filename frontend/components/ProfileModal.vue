@@ -5,14 +5,14 @@
             style="max-width: 90vw;"
             title="ユーザー編集"
             class="pa-10">
-      <v-form @submit.prevent="profileEdit(editUser.user_name)">
+      <v-form @submit.prevent="fetchFile(editUser.user_name)">
         <div class="d-flex justify-center">
           <v-avatar :image="image" size="120"/>
         </div>
         <div class="d-flex justify-center pt-5 pb-5">
           <v-btn :disabled="user.id !== currentUser.id" text="アバター編集" @click="onInput"></v-btn>
         </div>
-        <input type="file" ref="file" @change="prevImage" ></input>
+        <input type="file" ref="file" @change="prevImage" class="d-none"></input>
         <v-text-field v-model="editUser.user_name"
                       label="ユーザーネーム"
                       placeholder="太郎"
@@ -24,7 +24,6 @@
           text="閉じる"
           @click="dialog = false">
         </v-btn>
-        {{ uploadFile }}
       </v-form>
     </v-card>
   </v-dialog>
@@ -92,27 +91,61 @@ function onDialogToggle() {
     Object.assign(editUser, props.user)
 }
 
-const { getData: userData,
-  postFetch: userEditFetch
-} = usePostFetch(`${config.public.apiBase}/api/v1/profile`);
+// const { getData: userData,
+//   postFetch: userEditFetch
+// } = usePostFetch(`${config.public.apiBase}/api/v1/profile`);
 
-async function profileEdit(userName) {
-  const  userParams =
-  { query: {
-      user: {
-        user_name: userName,
-      }
-    }
+// async function profileEdit(userName) {
+//   const  userParams =
+//   { query: {
+//       user: {
+//         user_name: userName,
+//       }
+//     }
+//   }
+//   await userEditFetch("PUT", null, userParams)
+//   if (userData) {
+//     currentUser.value = userData
+//     dialog.value = false
+//     const attendance = groupUserAttendancesData.value.find(a => a.user.id === editUser.id)
+//     if (attendance) {
+//       attendance.user = userData
+//     }
+//   }
+// }
+
+async function fetchFile(userName) {
+  const accessToken = useCookie("access-token")
+  const client = useCookie("client")
+  const uid = useCookie("uid")
+
+  const formData = new FormData()
+  formData.append('user[user_name]', userName)
+  if (uploadFile.value) {
+    formData.append('user[avatar_image]', uploadFile.value)
   }
-  await userEditFetch("PUT", null, userParams)
-  if (userData) {
-    currentUser.value = userData
-    dialog.value = false
-    const attendance = groupUserAttendancesData.value.find(a => a.user.id === editUser.id)
-    if (attendance) {
-      attendance.user = userData
+  try {
+    const response = await $fetch(`${config.public.apiBase}/api/v1/profile`,{
+      method: 'PUT',
+      headers: {
+        "access-token": accessToken.value,
+        "client": client.value,
+        "uid": uid.value,
+      },
+      body: formData
+    })
+    console.log('アップロード結果:', response)
+
+    if (response) {
+        currentUser.value = response
+        dialog.value = false
+        const attendance = groupUserAttendancesData.value.find(a => a.user.id === editUser.id)
+        if (attendance) {
+          attendance.user = response
+        }
     }
+  } catch (error) {
+    console.log("sippai", error)
   }
 }
-
 </script>

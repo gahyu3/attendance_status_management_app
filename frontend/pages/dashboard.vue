@@ -7,7 +7,7 @@
     <div v-if="groupUserAttendancesData">
       <v-data-table :headers="headers" :items="groupUserAttendancesData">
         <template #item.avatar="{ item }">
-          <Avatar :avatarImageUrl="item.user?.avatar_image?.url"/>
+          <Avatar :user="item.user" />
         </template>
         <template #item.user="{ item }">
           {{ item.user.user_name }}
@@ -16,7 +16,7 @@
           <AttendancesStatusBtn :item="item" />
         </template>
         <template #item.destroy="{ item }">
-          <AttendancesDestroyBtn :item="item" v-if="isUserCurrentUser(item.user_id)"/>
+          <AttendancesDestroyBtn :item="item" v-if="isUserCurrentUser(item.user_id)" />
         </template>
       </v-data-table>
       <v-btn @click="createAttendance(formatDate, currentUser.id, selectedGroup.id)">+</v-btn>
@@ -69,7 +69,7 @@ async function createAttendance(date, user_id, group_id) {
         }
     };
 
-  await postAttendanceFetch("POST", null,attendanceParams)
+  await postAttendanceFetch("POST", null, attendanceParams)
 
   if (postAttendanceData.value) {
     groupUserAttendancesData.value.push(postAttendanceData.value.attendance)

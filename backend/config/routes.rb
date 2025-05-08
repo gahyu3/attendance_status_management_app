@@ -6,6 +6,7 @@ Rails.application.routes.draw do
       resources :dashboards, only: [:index]
       resources :groups, only: [:index]
       resources :attendances, only: [:create, :update, :destroy]
+      resource :profile, only: [:show, :update]
     end
   end
 end

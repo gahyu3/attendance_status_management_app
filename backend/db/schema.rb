@@ -16,8 +16,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_03_12_124956) do
 
   create_table "attendances", force: :cascade do |t|
     t.date "date", null: false
-    t.string "schedule", default: "出席予定"
-    t.string "attendances_status", default: "出席中"
+    t.integer "schedule", default: 0
+    t.integer "attendances_status", default: 0
     t.string "remarks"
     t.bigint "user_id", null: false
     t.bigint "group_id", null: false

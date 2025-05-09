@@ -40,7 +40,7 @@ group_ids = Group.ids
 
     Attendance.create!(
       date: day,
-      schedule: :scheduled_to_attend,
+      schedule: :full_day_attendance,
       attendances_status: :present,
       user_id: user_id,
       group_id: group_id,

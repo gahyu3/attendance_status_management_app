@@ -34,5 +34,7 @@ module Myapp
     #APIモードで Devise Token Auth を使う場合、クッキー認証を有効にするために設定
     config.middleware.use ActionDispatch::Cookies
     config.middleware.use ActionDispatch::Session::CookieStore
+
+    config.i18n.default_locale = :ja
   end
 end

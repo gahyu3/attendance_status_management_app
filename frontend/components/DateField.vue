@@ -27,7 +27,7 @@ function GetToday() {
 // グループ別ユーザー出席データ取得用
 const { getData: groupUsersData,
         getFetch: groupUsersFetch
-      } = useGetFetch(`${config.public.apiBase}/api/v1/dashboards`)
+      } = useGetFetch(`${config.public.apiBase}/api/v1/attendances`)
 
 watch(formatDate, async () => {
   await groupUsersFetch({
@@ -36,8 +36,8 @@ watch(formatDate, async () => {
             date: formatDate.value,
           }
         })
-  if (groupUsersData.value?.group_user_attendances) {
-    groupUserAttendancesData.value = groupUsersData.value.group_user_attendances
+  if (groupUsersData.value?.attendances) {
+    groupUserAttendancesData.value = groupUsersData.value.attendances
   } else {
     console.warn('出席データが見つかりません');
   }

@@ -42,7 +42,7 @@ const groupUserAttendancesData = useState("groupUserAttendancesData", () => []);
 // グループ別ユーザー出席データ取得用
 const { getData: groupUsersData,
         getFetch: groupUsersFetch
-      } = useGetFetch(`${config.public.apiBase}/api/v1/dashboards`)
+      } = useGetFetch(`${config.public.apiBase}/api/v1/attendances`)
 
 // グループ一覧データ取得用
 const { getData: groupsData,
@@ -72,8 +72,8 @@ onMounted(async () => {
         date: formatDate.value
       }
     });
-    if (groupUsersData.value?.group_user_attendances) {
-      groupUserAttendancesData.value = groupUsersData.value.group_user_attendances;
+    if (groupUsersData.value?.attendances) {
+      groupUserAttendancesData.value = groupUsersData.value.attendances;
     } else {
       console.warn('group_user_attendances の取得に失敗しました');
     }
@@ -93,8 +93,8 @@ async function onClickGroupUsers(name, day) {
     }
   })
 
-  if (groupUsersData.value.group_user_attendances) {
-    groupUserAttendancesData.value = groupUsersData.value.group_user_attendances
+  if (groupUsersData.value.attendances) {
+    groupUserAttendancesData.value = groupUsersData.value.attendances
   } else {
     console.warn('出席データが見つかりません');
   }

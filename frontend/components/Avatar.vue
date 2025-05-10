@@ -3,12 +3,15 @@
             @click="dialog = true"
             :image="`${config.public.apiBase}${user?.avatar_image?.url}`"
             size="32"
+            class="cursor-pointer"
             start/>
   <v-icon v-else
           @click="dialog = true"
           icon="mdi-account-circle"
-          size="x-large" start/>
-  <ProfileModal v-model="dialog" :user="user" />
+          size="x-large"
+          class="cursor-pointer"
+          start/>
+  <ProfileModal v-model="dialog" :user="user"/>
 </template>
 
 <script setup>

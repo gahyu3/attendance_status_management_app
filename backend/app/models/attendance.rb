@@ -2,8 +2,18 @@ class Attendance < ApplicationRecord
   belongs_to :user
   belongs_to :group
 
-  enum schedule: { scheduled_to_attend: "出席予定" }
-  enum attendances_status: { present: "出席中", away: "離席中" }
+  enum schedule: {
+    full_day_attendance: 0,
+    morning_attendance: 1,
+    afternoon_attendance: 2
+  }
+
+  enum attendances_status: {
+    present: 0,
+    away: 1,
+    before: 2,
+    finished: 3
+  }
 
   validates :date, presence: true
   validates :remarks, length: { maximum: 20 }

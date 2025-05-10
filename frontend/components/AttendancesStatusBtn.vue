@@ -1,6 +1,6 @@
 <template>
   <v-btn :color=btnColor(item.attendances_status) @click="updateStatus(item.id, item.attendances_status)">
-    {{ item.attendances_status }}
+    {{ statusToJapanese(item.attendances_status) }}
   </v-btn>
 </template>
 
@@ -45,27 +45,45 @@ async function updateStatus(attendance_id, currentStatus) {
   }
 }
 
-// ステータスをトグルする（present → away、away → present）
-function changeStatus(currentStatus) {
-  switch (currentStatus) {
-    case "present":
-      return "away"
-    case "away":
-      return "present"
-    default:
-      return currentStatus
+const statusMap = ref({
+  present: "出席中",
+  away: "離席中",
+  before: "参加前",
+  finished: "終了"
+})
+
+// ステータスを日本語化
+function statusToJapanese(status) {
+  if (statusMap.value[status] ) {
+    return statusMap.value[status]
+  } else {
+    console.warn("ステータスが存在しません。")
   }
+}
+
+const statusList = ["present", "away", "before", "finished"]
+
+// ステータスをトグルする（present → away → before → finished）
+function changeStatus(currentStatus) {
+  const currentIndex = statusList.indexOf(currentStatus)
+  // 不明なステーテスの場合indexOfが-1を返すため
+  if (currentIndex === -1) {
+    console.warn("不明なステータスかステータスが存在しません")
+    return null
+  }
+  const nextIndex = (currentIndex + 1) % statusList.length
+  return statusList[nextIndex]
+}
+
+const statusColorMap = {
+  present: "success",
+  away: "yellow",
+  before: "grey",
+  finished: "grey"
 }
 
 // ステータスに応じたボタンの色を返す
 function btnColor(currentStatus) {
-  switch (currentStatus) {
-    case "present":
-      return "success"
-    case "away":
-      return "yellow"
-    default:
-      return ""
-  }
+  return statusColorMap[currentStatus] || ""
 }
 </script>

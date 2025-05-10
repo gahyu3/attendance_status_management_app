@@ -3,9 +3,8 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      resources :dashboards, only: [:index]
       resources :groups, only: [:index]
-      resources :attendances, only: [:create, :update, :destroy]
+      resources :attendances, only: [:index, :create, :update, :destroy]
       resource :profile, only: [:show, :update]
     end
   end

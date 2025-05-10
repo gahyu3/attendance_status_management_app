@@ -61,29 +61,29 @@ function statusToJapanese(status) {
   }
 }
 
-// ステータスをトグルする（present → away → before → finished）
 const statusList = ["present", "away", "before", "finished"]
 
+// ステータスをトグルする（present → away → before → finished）
 function changeStatus(currentStatus) {
   const currentIndex = statusList.indexOf(currentStatus)
   // 不明なステーテスの場合indexOfが-1を返すため
   if (currentIndex === -1) {
-    console.warn("不明なステータスです")
+    console.warn("不明なステータスかステータスが存在しません")
     return null
   }
   const nextIndex = (currentIndex + 1) % statusList.length
   return statusList[nextIndex]
 }
 
+const statusColorMap = {
+  present: "success",
+  away: "yellow",
+  before: "grey",
+  finished: "grey"
+}
+
 // ステータスに応じたボタンの色を返す
 function btnColor(currentStatus) {
-  switch (currentStatus) {
-    case "present":
-      return "success"
-    case "away":
-      return "yellow"
-    default:
-      return ""
-  }
+  return statusColorMap[currentStatus] || ""
 }
 </script>

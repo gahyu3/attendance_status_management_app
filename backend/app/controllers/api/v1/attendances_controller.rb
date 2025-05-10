@@ -7,18 +7,7 @@ class Api::V1::AttendancesController < ApplicationController
         group_user_attendances = group.attendances.includes(:user).where(date: params[:date])
 
         if group
-          result = group_user_attendances.map do |attendance|
-            attendance.as_json(
-              include: { user: { only: [:id, :user_name, :avatar_image] } },
-              only: [:id, :date, :remarks, :user_id, :group_id]
-            ).merge(
-              schedule: attendance.schedule_i18n,
-              attendances_status: attendance.attendances_status_i18n
-            )
-          end
-
-          render json: { attendances: result }
-
+          render json: { attendances: group_user_attendances.as_json(include: :user) }
         else
           render json: { error: "Group not found" }, status: :not_found
         end

@@ -1,6 +1,6 @@
 <template>
   <v-btn :color=btnColor(item.attendances_status) @click="updateStatus(item.id, item.attendances_status)">
-    {{ item.attendances_status }}
+    {{ statusToJapanese(item.attendances_status) }}
   </v-btn>
 </template>
 
@@ -42,6 +42,21 @@ async function updateStatus(attendance_id, currentStatus) {
     groupUserAttendancesData.value[index].attendances_status = newStatus
   } else {
     console.log("データがありません")
+  }
+}
+
+const statusMap = ref({
+  present: "出席中",
+  away: "離席中",
+  before: "参加前",
+  finished: "終了"
+})
+
+function statusToJapanese(status) {
+  if (statusMap.value[status] ) {
+    return statusMap.value[status]
+  } else {
+    console.warn("ステータスが存在しません。")
   }
 }
 

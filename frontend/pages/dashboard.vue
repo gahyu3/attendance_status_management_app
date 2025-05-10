@@ -12,6 +12,9 @@
         <template #item.user="{ item }">
           {{ item.user.user_name }}
         </template>
+        <template #item.schedule="{ item }">
+          <AttendancesScheduleBtn :item="item" />
+        </template>
         <template #item.attendances_status="{ item }">
           <AttendancesStatusBtn :item="item" />
         </template>

@@ -12,6 +12,9 @@
         <template #item.user="{ item }">
           {{ item.user.user_name }}
         </template>
+        <template #item.schedule="{ item }">
+          <AttendancesScheduleBtn :item="item" />
+        </template>
         <template #item.attendances_status="{ item }">
           <AttendancesStatusBtn :item="item" />
         </template>
@@ -41,6 +44,7 @@ definePageMeta({
 const headers = [
   { title: "", value: "avatar"},
   { title: "名前", value: "user" },
+  { title: "備考", value: "remarks" },
   { title: "予定", value: "schedule" },
   { title: "出席状況", value: "attendances_status" },
   { title: "", value: "destroy" }

@@ -1,0 +1,111 @@
+<template>
+  <v-dialog v-model="dialog" @after-leave="onDialogToggle"
+            width="auto">
+    <v-card width="500"
+            style="max-width: 90vw;"
+            title="予定編集"
+            class="pa-10">
+      <v-form @submit.prevent="updateFetch(editItem.id, editItem.schedule, editItem.remarks)">
+        <div class="py-5">
+          <v-chip size="x-large" color="primary" variant="tonal">
+            {{ formatDate }}
+          </v-chip>
+        </div>
+        <v-select
+          v-model="editItem.schedule"
+          label="参加予定"
+          :items="scheduleList"
+          variant="outlined"
+        ></v-select>
+        <v-text-field v-model="editItem.remarks"
+                        label="備考"
+                        type="text"
+                        variant="outlined"
+                        maxlength="10"
+                        :counter="10"
+                        ></v-text-field>
+        <v-btn type="submit">
+          編集
+        </v-btn>
+        <v-btn class="ms-auto"
+              text="閉じる"
+              @click="dialog = false">
+        </v-btn>
+      </v-form>
+    </v-card>
+  </v-dialog>
+</template>
+
+<script setup>
+const props = defineProps({
+                item: {}
+              })
+
+const config = useRuntimeConfig()
+const dialog = defineModel()
+const { selectedDate, formatDate } = useDatePicker()
+
+const groupUserAttendancesData = useState("groupUserAttendancesData");
+
+const scheduleList = [
+  { title: "終日参加", value: "full_day_attendance"},
+  { title: "午前参加", value: "morning_attendance" },
+  { title: "午後参加", value: "afternoon_attendance" },
+];
+
+const editItem = reactive({
+  id: props.item?.id,
+  schedule: props.item?.schedule,
+  remarks: props.item?.remarks
+})
+
+watch(
+  () => props.item,
+  (item) => {
+    if (item) {
+      copyObject(item)
+    }
+  },
+  { immediate: true }
+)
+
+function copyObject(item) {
+  editItem.id = item.id
+  editItem.schedule = item.schedule
+  editItem.remarks = item.remarks
+}
+
+// ダイアログを閉じた時に元の値に戻る
+function onDialogToggle() {
+  Object.assign(editItem, props.item)
+}
+
+const { getData: attendanceScheduleDate,
+  postFetch: attendanceScheduleFetch
+} = usePostFetch(`${config.public.apiBase}/api/v1/attendances`);
+
+async function updateFetch(attendance_id, schedule, remarks) {
+  const attendanceParams =
+    { query: {
+      attendance: {
+        schedule: schedule,
+        remarks: remarks
+      }
+    }
+  };
+  await attendanceScheduleFetch("PUT", attendance_id, attendanceParams)
+
+  if (attendanceScheduleDate.value) {
+    const newSchedule = attendanceScheduleDate.value.attendance.schedule
+    const newRemarks = attendanceScheduleDate.value.attendance.remarks
+    const index = groupUserAttendancesData.value.findIndex(a => a.id === attendance_id)
+
+    groupUserAttendancesData.value[index].schedule = newSchedule
+    groupUserAttendancesData.value[index].remarks = newRemarks
+    dialog.value = false
+  } else {
+    console.log("データがありません")
+  }
+}
+
+</script>

@@ -44,6 +44,7 @@ definePageMeta({
 const headers = [
   { title: "", value: "avatar"},
   { title: "名前", value: "user" },
+  { title: "備考", value: "remarks" },
   { title: "予定", value: "schedule" },
   { title: "出席状況", value: "attendances_status" },
   { title: "", value: "destroy" }

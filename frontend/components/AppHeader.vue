@@ -54,7 +54,7 @@ onMounted(() => {
 
 async function currentUserFetch() {
   try {
-    const response = await fetch(`${config.public.apiBase}/api/v1/validate_token`, {
+    const response = await fetch(`${config.public.apiLocal}/api/v1/validate_token`, {
       headers: {
         "access-token": accessToken.value,
         "client": client.value,

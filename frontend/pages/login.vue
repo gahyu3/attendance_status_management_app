@@ -57,7 +57,7 @@ const errorMessage = ref("")
 
 const submitForm = async () => {
   try {
-    const response = await fetch(`${config.public.apiBase}/api/v1/sign_in`, {
+    const response = await fetch(`${config.public.apiLocal}/api/v1/sign_in`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

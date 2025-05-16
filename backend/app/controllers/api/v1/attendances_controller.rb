@@ -2,8 +2,8 @@ class Api::V1::AttendancesController < ApplicationController
     before_action :authenticate_user!
 
     def index
-      if params[:name].present? && params[:date].present?
-        group = Group.find_by(name: params[:name])
+      if params[:group_id].present? && params[:date].present?
+        group = Group.find(params[:group_id])
         group_user_attendances = group.attendances.includes(:user).where(date: params[:date])
 
         if group
@@ -12,7 +12,7 @@ class Api::V1::AttendancesController < ApplicationController
           render json: { error: "Group not found" }, status: :not_found
         end
       else
-        render json: { error: "Name and date must be provided" }, status: :bad_request
+        render json: { error: "group_id and date must be provided" }, status: :bad_request
       end
     end
 

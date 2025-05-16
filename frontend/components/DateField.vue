@@ -27,12 +27,12 @@ function GetToday() {
 // グループ別ユーザー出席データ取得用
 const { getData: groupUsersData,
         getFetch: groupUsersFetch
-      } = useGetFetch(`${config.public.apiBase}/api/v1/attendances`)
+      } = useGetFetch(`${config.public.apiLocal}/api/v1/attendances`)
 
 watch(formatDate, async () => {
   await groupUsersFetch({
           query: {
-            name: selectedGroup.value.name,
+            group_id: selectedGroup.value.id,
             date: formatDate.value,
           }
         })

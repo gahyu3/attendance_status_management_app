@@ -5,7 +5,7 @@
             style="max-width: 90vw;"
             title="ユーザー編集"
             class="pa-10">
-      <v-form @submit.prevent="fetchFile(editUser.user_name)">
+      <v-form @submit.prevent="updateUser(editUser.user_name)">
         <div class="d-flex justify-center">
           <v-avatar :image="image" size="120"/>
         </div>
@@ -38,6 +38,8 @@ const props = defineProps({
               })
 
 const config = useRuntimeConfig()
+const { getAuthHeaders } = useApiClient()
+
 const currentUser = useState("currentUser");
 const groupUserAttendancesData = useState("groupUserAttendancesData");
 
@@ -55,7 +57,7 @@ watch(
   (user) => {
     if (user) {
       copyObject(user)
-      const imageUrl = `${config.public.apiBase}${user.avatar_image.url}`
+      const imageUrl = `${config.public.apiLocal}${user.avatar_image.url}`
 
       image.value = imageUrl
       originalImage.value = imageUrl
@@ -84,54 +86,25 @@ function prevImage(event) {
   }
 }
 
-
 // ダイアログを閉じた時に元の画像を表示
 function onDialogToggle() {
     image.value = originalImage.value
     Object.assign(editUser, props.user)
 }
 
-// const { getData: userData,
-//   postFetch: userEditFetch
-// } = usePostFetch(`${config.public.apiBase}/api/v1/profile`);
-
-// async function profileEdit(userName) {
-//   const  userParams =
-//   { query: {
-//       user: {
-//         user_name: userName,
-//       }
-//     }
-//   }
-//   await userEditFetch("PUT", null, userParams)
-//   if (userData) {
-//     currentUser.value = userData
-//     dialog.value = false
-//     const attendance = groupUserAttendancesData.value.find(a => a.user.id === editUser.id)
-//     if (attendance) {
-//       attendance.user = userData
-//     }
-//   }
-// }
-
-async function fetchFile(userName) {
-  const accessToken = useCookie("access-token")
-  const client = useCookie("client")
-  const uid = useCookie("uid")
+async function updateUser(userName) {
 
   const formData = new FormData()
   formData.append('user[user_name]', userName)
+
   if (uploadFile.value) {
     formData.append('user[avatar_image]', uploadFile.value)
   }
+
   try {
-    const response = await $fetch(`${config.public.apiBase}/api/v1/profile`,{
-      method: 'PUT',
-      headers: {
-        "access-token": accessToken.value,
-        "client": client.value,
-        "uid": uid.value,
-      },
+    const response = await $fetch(`${config.public.apiLocal}/api/v1/profile`,{
+      method: "PUT",
+      headers: getAuthHeaders(),
       body: formData
     })
     console.log('アップロード結果:', response)
@@ -145,7 +118,7 @@ async function fetchFile(userName) {
         }
     }
   } catch (error) {
-    console.log("sippai", error)
+    console.log("APIエラー", error)
   }
 }
 </script>

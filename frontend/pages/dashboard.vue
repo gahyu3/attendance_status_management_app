@@ -22,7 +22,7 @@
           <AttendancesDestroyBtn :item="item" v-if="isUserCurrentUser(item.user_id)" />
         </template>
       </v-data-table>
-      <v-btn @click="createAttendance(formatDate, currentUser.id, selectedGroup.id)">+</v-btn>
+      <AttendanceCreateBtn />
     </div>
   </v-main>
 
@@ -33,6 +33,7 @@ import { ref } from 'vue';
 const config = useRuntimeConfig()
 const currentUser = useState("currentUser");
 const selectedGroup = useState("selectedGroup");
+const groupUserAttendancesData = useState("groupUserAttendancesData");
 const { formatDate } = useDatePicker()
 
 definePageMeta({
@@ -54,30 +55,5 @@ function isUserCurrentUser(userId) {
   return userId === currentUser.value.id
 };
 
-const groupUserAttendancesData = useState("groupUserAttendancesData");
-
-const { getData: postAttendanceData,
-        postFetch: postAttendanceFetch
-      } = usePostFetch(`${config.public.apiBase}/api/v1/attendances`);
-
-async function createAttendance(date, user_id, group_id) {
-
-  const attendanceParams =
-    { query: {
-        attendance: {
-          date: date,
-          remarks: "",
-          user_id: user_id,
-          group_id: group_id,
-          }
-        }
-    };
-
-  await postAttendanceFetch("POST", null, attendanceParams)
-
-  if (postAttendanceData.value) {
-    groupUserAttendancesData.value.push(postAttendanceData.value.attendance)
-  }
-};
 
 </script>

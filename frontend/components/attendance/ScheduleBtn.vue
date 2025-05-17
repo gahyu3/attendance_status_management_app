@@ -1,6 +1,6 @@
 <template>
   <v-btn @click="dialog = true" :color="btnColor(item.schedule)">{{ scheduleToJapanese(item.schedule) }}</v-btn>
-  <ScheduleModal v-model="dialog" :item="item" />
+  <DialogSchedule v-model="dialog" :item="item" />
 </template>
 
 <script setup>

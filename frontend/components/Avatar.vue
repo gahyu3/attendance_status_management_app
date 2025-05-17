@@ -11,7 +11,7 @@
           size="x-large"
           class="cursor-pointer"
           start/>
-  <ProfileModal v-model="dialog" :user="user"/>
+  <DialogProfile v-model="dialog" :user="user"/>
 </template>
 
 <script setup>

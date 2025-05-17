@@ -1,38 +1,34 @@
 <template>
   <v-main>
     <v-container class="h-100 d-flex align-center justify-center">
-      <v-sheet
-        :elevation="11"
-        :width="500"
-        border
-        rounded
-        class="pa-10"
-      >
+      <v-sheet :elevation="11"
+                :width="500"
+                border
+                rounded
+                class="pa-10">
       <div class="text-center mb-4">
         <h1>ログイン</h1>
       </div>
-        <v-form @submit.prevent="submitForm">
+        <v-form @submit.prevent="formSubmit">
           <v-text-field
             v-model="form.email"
             label="メールアドレス"
             placeholder="johndoe@gmail.com"
-            type="email"
-          ></v-text-field>
+            type="email">
+          </v-text-field>
           <v-text-field
             v-model="form.password"
             label="パスワード"
             placeholder="●●●●●●●"
-            type="password"
-          ></v-text-field>
+            type="password">
+          </v-text-field>
           <div v-if="errorMessage" class="text-red mb-2">メールアドレスかパスワードが違います</div>
 
           <v-layout>
-            <v-btn
-                  class="mx-auto"
-                  color="success"
-                  size="large"
-                  type="submit"
-                >
+            <v-btn class="mx-auto"
+                    color="success"
+                    size="large"
+                    type="submit">
                   ログイン
             </v-btn>
           </v-layout>
@@ -52,34 +48,36 @@ const form = ref({
   password: ""
 })
 
-const responseData = ref(null)
 const errorMessage = ref("")
 
-const submitForm = async () => {
-  try {
-    const response = await fetch(`${config.public.apiLocal}/api/v1/sign_in`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(form.value)
-    })
+// ログインのPOSTリクエスト送信
+async function formSubmit() {
+  let tokenHeaders = {}
 
-    const resData = await response.json()
+  try {
+    const response = await $fetch(`${config.public.apiLocal}/api/v1/sign_in`, {
+      method: "POST",
+      body: form.value,
+      onResponse({ response }) {
+        tokenHeaders = {
+          'access-token': response.headers.get('access-token'),
+          client: response.headers.get('client'),
+          uid: response.headers.get('uid'),
+        }
+      }
+    });
 
     const accessToken = useCookie('access-token', { maxAge: 60 * 60 * 24, secure: true })
     const client = useCookie('client', { maxAge: 60 * 60 * 24, secure: true })
     const uid = useCookie('uid', { maxAge: 60 * 60 * 24, secure: true })
 
-    if (accessToken && client && uid) {
-      // トークンが存在する場合、sessionStorageに保存
-      accessToken.value = response.headers.get('access-token')
-      client.value = response.headers.get('client')
-      uid.value = response.headers.get('uid')
-      responseData.value = resData
+    if (tokenHeaders['access-token'] && tokenHeaders.client && tokenHeaders.uid) {
+      accessToken.value = tokenHeaders['access-token']
+      client.value = tokenHeaders.client
+      uid.value = tokenHeaders.uid
       errorMessage.value = ""
 
-      return navigateTo("/dashboard");
+      return navigateTo("/dashboard")
     } else {
       throw new Error('tokenがありません')
     }
@@ -89,4 +87,5 @@ const submitForm = async () => {
     errorMessage.value = error.message
   }
 }
+
 </script>

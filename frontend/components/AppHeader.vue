@@ -25,7 +25,7 @@ const logout = async () => {
     return
   }
 
-  const response = await fetch(`${config.public.apiBase}/api/v1/sign_out`, {
+  const response = await fetch(`${config.public.apiLocal}/api/v1/sign_out`, {
     method: "DELETE",
     headers: {
       "access-token": accessToken.value,

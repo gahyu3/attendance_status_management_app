@@ -5,28 +5,30 @@
 
 <script setup>
 import { ref } from 'vue'
-const config = useRuntimeConfig()
-
 defineProps({
   item:{}
 })
 
+const config = useRuntimeConfig()
+const { getAuthHeaders } = useApiClient()
+
 const groupUserAttendancesData = useState("groupUserAttendancesData");
 
-const { getData: destroyAttendanceData,
-  postFetch: destroyAttendanceFetch
-} = usePostFetch(`${config.public.apiBase}/api/v1/attendances`);
-
-// 出席状況の削除
+// 出席データを削除
 async function deleteAttendance(attendanceId) {
-  await destroyAttendanceFetch("DELETE", attendanceId)
-
-  if (destroyAttendanceData.value) {
-    const index = groupUserAttendancesData.value.findIndex(a => a.id === attendanceId)
-    groupUserAttendancesData.value.splice(index, attendanceId)
-  } else {
-    console.log("データがありません")
+  try {
+    const response = await $fetch(`${config.public.apiLocal}/api/v1/attendances/${attendanceId}`, {
+      method: "DELETE",
+      headers: getAuthHeaders(),
+    })
+    if (response) {
+      console.log(response)
+      const index = groupUserAttendancesData.value.findIndex(attendance => attendance.id === attendanceId)
+      groupUserAttendancesData.value.splice(index, 1)
+    }
+  } catch (error) {
+    console.error('APIエラー:', error)
   }
-}
+};
 
 </script>

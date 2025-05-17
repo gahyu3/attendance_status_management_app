@@ -19,7 +19,6 @@ const { formatDate } = useDatePicker()
 
 // 出席データを作成して追加
 async function createAttendance(date, userid, groupId) {
-
   const attendanceParams = {
     attendance: {
       date: date,

@@ -1,47 +1,49 @@
 <template>
-  <v-btn :color=btnColor(item.attendances_status) @click="updateStatus(item.id, item.attendances_status)">
+  <v-btn :color=btnColor(item.attendances_status) @click="updateAttendanceStatus(item.id, item.attendances_status)">
     {{ statusToJapanese(item.attendances_status) }}
   </v-btn>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-const config = useRuntimeConfig()
 
 defineProps({
   item:{}
 })
 
+const config = useRuntimeConfig()
+const { getAuthHeaders } = useApiClient()
+
 const groupUserAttendancesData = useState("groupUserAttendancesData");
 
-const { getData: updateAttendanceData,
-  postFetch: updateAttendanceFetch
-} = usePostFetch(`${config.public.apiBase}/api/v1/attendances`);
+// UIとバックエンドの両方の出席ステータスを更新する関数
+async function updateAttendanceStatus(attendance_id, currentStatus) {
+  const newStatus = changeStatus(currentStatus)
+  await updateStatus(attendance_id, newStatus)
+}
 
 // PUTリクエストを送信
-async function updateAttendance(attendance_id, newStatus) {
-  const attendanceParams =
-  { query: {
+async function updateStatus(attendanceId, newStatus) {
+  const attendanceParams = {
     attendance: {
       attendances_status: newStatus,
     }
-  }
-};
+  };
 
-await updateAttendanceFetch("PUT", attendance_id, attendanceParams)
-}
-
-// UIとバックエンドの両方の出席ステータスを更新する関数
-async function updateStatus(attendance_id, currentStatus) {
-  const newStatus = changeStatus(currentStatus)
-  await updateAttendance(attendance_id, newStatus)
-  if (updateAttendanceData.value) {
-    const newStatus = updateAttendanceData.value.attendance.attendances_status
-    const index = groupUserAttendancesData.value.findIndex(a => a.id === attendance_id)
-
-    groupUserAttendancesData.value[index].attendances_status = newStatus
-  } else {
-    console.log("データがありません")
+  try {
+    const response = await $fetch(`${config.public.apiLocal}/api/v1/attendances/${attendanceId}`, {
+      method: "PUT",
+      headers: getAuthHeaders(),
+      body: attendanceParams
+    })
+    if (response.attendance) {
+      console.log(response)
+      const newStatus = response.attendance.attendances_status
+      const index = groupUserAttendancesData.value.findIndex(attendance => attendance.id === attendanceId)
+      groupUserAttendancesData.value[index].attendances_status = newStatus
+    }
+  } catch (error) {
+    console.error('APIエラー:', error)
   }
 }
 

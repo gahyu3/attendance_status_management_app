@@ -13,13 +13,13 @@
           {{ item.user.user_name }}
         </template>
         <template #item.schedule="{ item }">
-          <AttendancesScheduleBtn :item="item" />
+          <AttendanceScheduleBtn :item="item" />
         </template>
         <template #item.attendances_status="{ item }">
-          <AttendancesStatusBtn :item="item" />
+          <AttendanceStatusBtn :item="item" />
         </template>
         <template #item.destroy="{ item }">
-          <AttendancesDestroyBtn :item="item" v-if="isUserCurrentUser(item.user_id)" />
+          <AttendanceDestroyBtn :item="item" v-if="isUserCurrentUser(item.user_id)" />
         </template>
       </v-data-table>
       <AttendanceCreateBtn />

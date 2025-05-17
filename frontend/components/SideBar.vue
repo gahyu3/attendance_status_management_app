@@ -20,6 +20,7 @@
 import { ref, onMounted } from 'vue';
 
 const config = useRuntimeConfig()
+const { getAuthHeaders } = useApiClient()
 
 const { selectedDate, formatDate } = useDatePicker()
 const selectedGroup = useState("selectedGroup", () => null);
@@ -57,17 +58,10 @@ function setGroup(group) {
 
 // グループ名と日付を指定して出席データを取得（クリックイベント用）
 async function getAttendance(date, groupId) {
-  const accessToken = useCookie("access-token")
-  const client = useCookie("client")
-  const uid = useCookie("uid")
 
   try {
     const response = await $fetch(`${config.public.apiLocal}/api/v1/attendances`, {
-      headers: {
-        "access-token": accessToken.value,
-        "client": client.value,
-        "uid": uid.value
-      },
+      headers: getAuthHeaders(),
       query: {
         date: date,
         group_id: groupId

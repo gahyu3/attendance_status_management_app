@@ -14,63 +14,31 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 const config = useRuntimeConfig()
-
-const accessToken = useCookie("access-token")
-const client = useCookie("client")
-const uid = useCookie("uid")
-
-const logout = async () => {
-  if (!accessToken.value || !client.value || !uid.value) {
-    console.log("ログインしていません")
-    return
-  }
-
-  const response = await fetch(`${config.public.apiBase}/api/v1/sign_out`, {
-    method: "DELETE",
-    headers: {
-      "access-token": accessToken.value,
-      "client": client.value,
-      "uid": uid.value
-    }
-  })
-
-  if (response.ok) {
-    // クッキーを削除してログアウト
-    accessToken.value = null
-    client.value = null
-    uid.value = null
-    return navigateTo("/login")
-  } else {
-    console.error("ログアウト失敗", await response.json())
-  }
-}
+const { getAuthHeaders } = useApiClient()
 
 const currentUser = useState("currentUser", () => "");
 
-// マウント時にログインユーザーを獲得
-onMounted(() => {
-  currentUserFetch();
-})
+const { data } = await useFetch('/api/auth')
 
-async function currentUserFetch() {
+if (data.value) {
+  currentUser.value = data.value.data
+}
+
+async function logout() {
   try {
-    const response = await fetch(`${config.public.apiBase}/api/v1/validate_token`, {
-      headers: {
-        "access-token": accessToken.value,
-        "client": client.value,
-        "uid": uid.value
-      }
-    });
-
-    if (response.ok) {
-      const res = await response.json();
-      currentUser.value = res.data
-    } else {
-      const errorRes = await response.json();
-      console.error("ユーザー獲得失敗", errorRes);
+    const response = await $fetch(`${config.public.apiLocal}/api/v1/sign_out`, {
+      method: "DELETE",
+      headers: getAuthHeaders()
+    })
+    if (response.success === true) {
+      // クッキーを削除してログアウト
+      useCookie("access-token").value = null
+      useCookie("client").value = null
+      useCookie("uid").value = null
+      await navigateTo("/login")
     }
   } catch (error) {
-    console.error("エラー発生:", error);
+    console.error("ログアウト失敗", error)
   }
 }
 

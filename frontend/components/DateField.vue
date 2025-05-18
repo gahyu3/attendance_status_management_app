@@ -11,9 +11,10 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { watch } from 'vue';
 
 const config = useRuntimeConfig()
+const { getAuthHeaders } = useApiClient()
 
 const { selectedDate, formatDate } = useDatePicker()
 const selectedGroup = useState("selectedGroup");
@@ -24,22 +25,28 @@ function GetToday() {
   selectedDate.value = new Date()
 }
 
-// グループ別ユーザー出席データ取得用
-const { getData: groupUsersData,
-        getFetch: groupUsersFetch
-      } = useGetFetch(`${config.public.apiBase}/api/v1/attendances`)
-
 watch(formatDate, async () => {
-  await groupUsersFetch({
-          query: {
-            name: selectedGroup.value.name,
-            date: formatDate.value,
-          }
-        })
-  if (groupUsersData.value?.attendances) {
-    groupUserAttendancesData.value = groupUsersData.value.attendances
-  } else {
-    console.warn('出席データが見つかりません');
+  await getAttendance(formatDate.value, selectedGroup.value.id)
+  });
+
+// グループ名と日付を指定して出席データを取得（クリックイベント用）
+async function getAttendance(date, groupId) {
+  console.log('リクエスト送信', date)
+  try {
+    const response = await $fetch(`${config.public.apiLocal}/api/v1/attendances`, {
+      headers: getAuthHeaders(),
+      query: {
+        date: date,
+        group_id: groupId
+      }
+    })
+    if (response.attendances) {
+      console.log(response)
+      groupUserAttendancesData.value = response.attendances
+    }
+  } catch (error) {
+    console.error('APIエラー:', error)
   }
-});
+}
+
 </script>

@@ -1,7 +1,7 @@
 <template>
   <v-avatar v-if="user?.avatar_image?.url"
             @click="dialog = true"
-            :image="`${config.public.apiBase}${user?.avatar_image?.url}`"
+            :image="`${config.public.apiLocal}${user?.avatar_image?.url}`"
             size="32"
             class="cursor-pointer"
             start/>
@@ -11,7 +11,7 @@
           size="x-large"
           class="cursor-pointer"
           start/>
-  <ProfileModal v-model="dialog" :user="user"/>
+  <DialogProfile v-model="dialog" :user="user"/>
 </template>
 
 <script setup>

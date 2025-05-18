@@ -5,7 +5,9 @@
             style="max-width: 90vw;"
             title="予定編集"
             class="pa-10">
-      <v-form @submit.prevent="updateFetch(editItem.id, editItem.schedule, editItem.remarks)">
+      <v-form @submit.prevent="updateSchedule(editItem.id,
+                                              editItem.schedule,
+                                              editItem.remarks)">
         <div class="py-5">
           <v-chip size="x-large" color="primary" variant="tonal">
             {{ formatDate }}
@@ -18,12 +20,12 @@
           variant="outlined"
         ></v-select>
         <v-text-field v-model="editItem.remarks"
-                        label="備考"
-                        type="text"
-                        variant="outlined"
-                        maxlength="10"
-                        :counter="10"
-                        ></v-text-field>
+                      label="備考"
+                      type="text"
+                      variant="outlined"
+                      maxlength="10"
+                      :counter="10"
+                      ></v-text-field>
         <v-btn type="submit">
           編集
         </v-btn>
@@ -44,6 +46,7 @@ const props = defineProps({
 const config = useRuntimeConfig()
 const dialog = defineModel()
 const { selectedDate, formatDate } = useDatePicker()
+const { getAuthHeaders } = useApiClient()
 
 const groupUserAttendancesData = useState("groupUserAttendancesData");
 
@@ -80,31 +83,33 @@ function onDialogToggle() {
   Object.assign(editItem, props.item)
 }
 
-const { getData: attendanceScheduleDate,
-  postFetch: attendanceScheduleFetch
-} = usePostFetch(`${config.public.apiBase}/api/v1/attendances`);
-
-async function updateFetch(attendance_id, schedule, remarks) {
-  const attendanceParams =
-    { query: {
+// PUTリクエストを送信
+async function updateSchedule(attendanceId, schedule, remarks) {
+  const attendanceParams = {
       attendance: {
         schedule: schedule,
         remarks: remarks
-      }
     }
   };
-  await attendanceScheduleFetch("PUT", attendance_id, attendanceParams)
 
-  if (attendanceScheduleDate.value) {
-    const newSchedule = attendanceScheduleDate.value.attendance.schedule
-    const newRemarks = attendanceScheduleDate.value.attendance.remarks
-    const index = groupUserAttendancesData.value.findIndex(a => a.id === attendance_id)
+  try {
+    const response = await $fetch(`${config.public.apiLocal}/api/v1/attendances/${attendanceId}`, {
+      method: "PUT",
+      headers: getAuthHeaders(),
+      body: attendanceParams
+    })
+    if (response.attendance) {
+      console.log(response)
+      const newSchedule = response.attendance.schedule
+      const newRemarks = response.attendance.remarks
+      const index = groupUserAttendancesData.value.findIndex(attendance => attendance.id === attendanceId)
 
-    groupUserAttendancesData.value[index].schedule = newSchedule
-    groupUserAttendancesData.value[index].remarks = newRemarks
-    dialog.value = false
-  } else {
-    console.log("データがありません")
+      groupUserAttendancesData.value[index].schedule = newSchedule
+      groupUserAttendancesData.value[index].remarks = newRemarks
+      dialog.value = false
+    }
+  } catch (error) {
+    console.error('APIエラー:', error)
   }
 }
 

@@ -28,7 +28,7 @@
 
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue';
 const config = useRuntimeConfig()
 const currentUser = useState("currentUser");
@@ -54,6 +54,5 @@ const headers = [
 function isUserCurrentUser(userId) {
   return userId === currentUser.value.id
 };
-
 
 </script>

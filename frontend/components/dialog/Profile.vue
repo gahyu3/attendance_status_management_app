@@ -52,19 +52,19 @@ const editUser = reactive({
   user_name: props.user?.user_name
 })
 
-watch(
-  () => props.user,
-  (user) => {
-    if (user) {
-      copyObject(user)
-      const imageUrl = `${config.public.apiLocal}${user.avatar_image.url}`
+// watch(
+//   () => props.user,
+//   (user) => {
+//     if (user) {
+//       copyObject(user)
+//       const imageUrl = `${config.public.apiBase}${user.avatar_image.url}`
 
-      image.value = imageUrl
-      originalImage.value = imageUrl
-    }
-  },
-  { immediate: true }
-)
+//       image.value = imageUrl
+//       originalImage.value = imageUrl
+//     }
+//   },
+//   { immediate: true }
+// )
 
 function copyObject(user) {
   editUser.id = user.id

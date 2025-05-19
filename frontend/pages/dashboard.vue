@@ -31,7 +31,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 const config = useRuntimeConfig()
-const currentUser = useState("currentUser");
+const currentUser = useCurrentUser()
 const selectedGroup = useState("selectedGroup");
 const groupUserAttendancesData = useState("groupUserAttendancesData");
 const { formatDate } = useDatePicker()
@@ -51,8 +51,8 @@ const headers = [
   { title: "", value: "destroy" }
 ];
 
-function isUserCurrentUser(userId) {
-  return userId === currentUser.value.id
+function isUserCurrentUser(userId: number): boolean {
+  return userId === currentUser.value?.id
 };
 
 </script>

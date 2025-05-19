@@ -1,11 +1,5 @@
-interface AuthHeaders {
-  "access-token": string
-  "client": string
-  "uid": string
-}
-
 export function useApiClient() {
-  const getAuthHeaders = (): AuthHeaders => {
+  const getAuthHeaders = (): Record<string, string> => {
     const accessToken = useCookie<string | null>("access-token")
     const client = useCookie<string | null>("client")
     const uid = useCookie<string | null>("uid")

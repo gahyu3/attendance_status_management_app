@@ -17,7 +17,7 @@ export interface LogoutResponse {
 
 // /api/v1/groups
 export interface GroupResponse {
-  groups: Group
+  groups: Group[]
 }
 
 export interface Group {
@@ -27,7 +27,7 @@ export interface Group {
 
 // /api/vi/attendances
 export interface AttendanceResponse {
-  attendances: Attendance
+  attendances: Attendance[]
 }
 
 export interface Attendance {

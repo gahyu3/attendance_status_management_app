@@ -4,7 +4,7 @@
       <v-list-item title="グループ"></v-list-item>
       <v-divider></v-divider>
       <v-list>
-        <v-list-item v-for="(group, index) in groups.groups"
+        <v-list-item v-for="(group, index) in groupDate?.groups"
         :key="group.id"
         :value="group.name"
         :active="index === activeIndex"
@@ -41,11 +41,12 @@ const { data: attendanceDate } = await useFetch<AttendanceResponse>('/api/attend
 const activeIndex = ref(0);
 
 onMounted(() => {
-  if (attendances.value?.attendances) {
-    groupUserAttendancesData.value = attendances.value.attendances
+  if (attendanceDate.value?.attendances) {
+    attendances.value = attendanceDate.value
     }
-  if (groups.value?.groups) {
-    selectedGroup.value = groups.value?.groups?.[0]
+  if (groupDate.value?.groups) {
+    console.log(groupDate.value)
+    selectedGroup.value = groupDate.value?.groups[0]
     }
   }
 )
@@ -61,10 +62,10 @@ function setGroup(group: Group): void {
 }
 
 // グループ名と日付を指定して出席データを取得（クリックイベント用）
-async function getAttendance(date, groupId) {
+async function getAttendance(date: string, groupId: number): Promise<void> {
 
   try {
-    const response = await $fetch(`${config.public.apiLocal}/api/v1/attendances`, {
+    const response: AttendanceResponse = await $fetch(`${config.public.apiLocal}/api/v1/attendances`, {
       headers: getAuthHeaders(),
       query: {
         date: date,
@@ -73,7 +74,7 @@ async function getAttendance(date, groupId) {
     })
     if (response.attendances) {
       console.log(response)
-      groupUserAttendancesData.value = response.attendances
+      attendances.value = response
     }
   } catch (error) {
     console.error('APIエラー:', error)

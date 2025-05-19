@@ -18,7 +18,7 @@
   </ClientOnly>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted } from 'vue';
 
 const config = useRuntimeConfig()
@@ -49,12 +49,12 @@ onMounted(() => {
 )
 
 // アクティブなインデックスをセット
-function setActive(index) {
+function setActive(index: number): void {
   activeIndex.value = index;
 }
 
 // 現在選択中のグループ名をセット
-function setGroup(group) {
+function setGroup(group: string): void {
   selectedGroup.value = group
 }
 

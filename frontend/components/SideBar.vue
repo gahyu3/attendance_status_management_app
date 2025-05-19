@@ -20,16 +20,18 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
+import type { AttendanceResponse, GroupResponse, Group } from '~/types/index';
 
 const config = useRuntimeConfig()
 const { getAuthHeaders } = useApiClient()
 
 const { selectedDate, formatDate } = useDatePicker()
-const selectedGroup = useState("selectedGroup", () => null);
-const groupUserAttendancesData = useState("groupUserAttendancesData", () => []);
+const attendances = useAttendances()
+const selectedGroup = useSelectedGroup()
 
-const { data: groups } = await useFetch('/api/group')
-const { data: attendances } = await useFetch('/api/attendance', {
+
+const { data: groupDate } = await useFetch<GroupResponse>('/api/group')
+const { data: attendanceDate } = await useFetch<AttendanceResponse>('/api/attendance', {
   query: {
     date: formatDate,
     group_id: 1
@@ -54,7 +56,7 @@ function setActive(index: number): void {
 }
 
 // 現在選択中のグループ名をセット
-function setGroup(group: string): void {
+function setGroup(group: Group): void {
   selectedGroup.value = group
 }
 

@@ -1,4 +1,3 @@
-// composables/useCurrentUser.ts
 import type { User } from '~/types/index'
 
 export const useCurrentUser = () => {

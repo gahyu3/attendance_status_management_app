@@ -15,13 +15,13 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import type { LogoutResponse, UserResponse } from '~/types/index'
+import type { LoginResponse, LogoutResponse } from '~/types/index'
 
 const config = useRuntimeConfig()
 const { getAuthHeaders } = useApiClient()
 
 const currentUser = useCurrentUser()
-const { data } = await useFetch<UserResponse>('/api/auth')
+const { data } = await useFetch<LoginResponse>('/api/auth')
 
 if (data.value) {
   currentUser.value = data.value.data

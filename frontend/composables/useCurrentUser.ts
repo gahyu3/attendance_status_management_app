@@ -1,5 +1,8 @@
 import type { User } from '~/types/index'
 
-export const useCurrentUser = () => {
-  return useState<User | null>('currentUser', () => null)
+export function useCurrentUser(): {
+  currentUser: Ref<User | null>
+} {
+  const currentUser = useState<User | null>("currentUser", () => null);
+  return { currentUser };
 }

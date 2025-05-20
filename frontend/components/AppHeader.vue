@@ -20,7 +20,7 @@ import type { LoginResponse, LogoutResponse } from '~/types/index'
 const config = useRuntimeConfig()
 const { getAuthHeaders } = useApiClient()
 
-const currentUser = useCurrentUser()
+const { currentUser } = useCurrentUser()
 const { data } = await useFetch<LoginResponse>('/api/auth')
 
 if (data.value) {

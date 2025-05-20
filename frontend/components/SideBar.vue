@@ -1,6 +1,6 @@
 <template>
   <ClientOnly>
-    <v-navigation-drawer>
+    <v-navigation-drawer permanent>
       <v-list-item title="グループ"></v-list-item>
       <v-divider></v-divider>
       <v-list>
@@ -26,8 +26,8 @@ const config = useRuntimeConfig()
 const { getAuthHeaders } = useApiClient()
 
 const { selectedDate, formatDate } = useDatePicker()
-const attendances = useAttendances()
-const selectedGroup = useSelectedGroup()
+const { attendances } = useAttendances()
+const { selectedGroup } = useSelectedGroup()
 
 
 const { data: groupDate } = await useFetch<GroupResponse>('/api/group')

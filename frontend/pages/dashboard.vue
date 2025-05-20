@@ -29,8 +29,9 @@
 </template>
 
 <script setup lang="ts">
-const currentUser = useCurrentUser()
-const attendances = useAttendances()
+const { currentUser } = useCurrentUser()
+const { attendances } = useAttendances()
+
 
 definePageMeta({
   middleware: [

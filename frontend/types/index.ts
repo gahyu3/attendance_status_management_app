@@ -38,6 +38,7 @@ export interface Attendance {
   remarks: string
   user_id: number
   group_id: number
+  user: User
 }
 
 

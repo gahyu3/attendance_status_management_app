@@ -4,8 +4,8 @@
   <SideBar />
   <v-main>
     <DateField />
-    <div v-if="groupUserAttendancesData">
-      <v-data-table :headers="headers" :items="groupUserAttendancesData">
+    <div v-if="attendances">
+      <v-data-table :headers="headers" :items="attendances?.attendances">
         <template #item.avatar="{ item }">
           <Avatar :user="item.user" />
         </template>
@@ -29,12 +29,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-const config = useRuntimeConfig()
 const currentUser = useCurrentUser()
-const selectedGroup = useState("selectedGroup");
-const groupUserAttendancesData = useState("groupUserAttendancesData");
-const { formatDate } = useDatePicker()
+const attendances = useAttendances()
 
 definePageMeta({
   middleware: [

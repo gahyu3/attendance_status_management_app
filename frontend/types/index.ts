@@ -7,7 +7,9 @@ export interface User {
   id: number
   user_name: string
   email: string
-  avatar_image: string
+  avatar_image?: {
+    url: string
+  }
 }
 
 // /api/v1/sign_out

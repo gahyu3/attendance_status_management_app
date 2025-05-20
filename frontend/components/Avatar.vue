@@ -14,10 +14,9 @@
   <DialogProfile v-model="dialog" :user="user"/>
 </template>
 
-<script setup>
-defineProps({
-  user: {},
-})
+<script setup lang="ts">
+import type { User } from '~/types/index';
+defineProps<{ user: User | null}>()
 const config = useRuntimeConfig();
 const dialog = ref(false)
 

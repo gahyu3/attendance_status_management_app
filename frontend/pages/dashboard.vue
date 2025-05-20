@@ -4,7 +4,6 @@
   <SideBar />
   <v-main>
     <DateField />
-    <div v-if="attendances">
       <v-data-table :headers="headers" :items="attendances?.attendances">
         <template #item.avatar="{ item }">
           <Avatar :user="item.user" />
@@ -23,7 +22,6 @@
         </template>
       </v-data-table>
       <AttendanceCreateBtn />
-    </div>
   </v-main>
 
 </template>

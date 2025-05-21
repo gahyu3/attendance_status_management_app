@@ -20,7 +20,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import type { AttendanceResponse, GroupResponse, Group } from '~/types/index';
+import type { AttendancesResponse, GroupResponse, Group } from '~/types/index';
 
 const config = useRuntimeConfig()
 const { getAuthHeaders } = useApiClient()
@@ -31,7 +31,7 @@ const { selectedGroup } = useSelectedGroup()
 
 
 const { data: groupDate } = await useFetch<GroupResponse>('/api/group')
-const { data: attendanceDate } = await useFetch<AttendanceResponse>('/api/attendance', {
+const { data: attendanceDate } = await useFetch<AttendancesResponse>('/api/attendance', {
   query: {
     date: formatDate,
     group_id: 1
@@ -65,7 +65,7 @@ function setGroup(group: Group): void {
 async function getAttendance(date: string, groupId: number): Promise<void> {
 
   try {
-    const response: AttendanceResponse = await $fetch(`${config.public.apiLocal}/api/v1/attendances`, {
+    const response: AttendancesResponse = await $fetch(`${config.public.apiLocal}/api/v1/attendances`, {
       headers: getAuthHeaders(),
       query: {
         date: date,

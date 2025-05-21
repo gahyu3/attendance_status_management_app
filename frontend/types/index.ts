@@ -28,8 +28,12 @@ export interface Group {
 }
 
 // /api/vi/attendances
-export interface AttendanceResponse {
+export interface AttendancesResponse {
   attendances: Attendance[]
+}
+
+export interface AttendanceResponse {
+  attendance: Attendance
 }
 
 export interface Attendance {

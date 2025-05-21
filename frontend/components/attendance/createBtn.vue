@@ -1,23 +1,29 @@
 <template>
   <v-btn text="+" @click="createAttendance(formatDate,
-                                          currentUser.id,
-                                          selectedGroup.id)">
+                                          currentUser?.id ?? null,
+                                          selectedGroup?.id ?? null)">
   </v-btn>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
+import type { AttendanceResponse } from '~/types/index';
 
 const config = useRuntimeConfig()
-const { getAuthHeaders } = useApiClient()
 
-const groupUserAttendancesData = useState("groupUserAttendancesData");
-const currentUser = useState("currentUser");
-const selectedGroup = useState("selectedGroup");
+const { getAuthHeaders } = useApiClient()
 const { formatDate } = useDatePicker()
+const { currentUser } = useCurrentUser()
+const { attendances } = useAttendances()
+const { selectedGroup } = useSelectedGroup()
 
 // 出席データを作成して追加
-async function createAttendance(date, userid, groupId) {
+async function createAttendance(date: string,
+                                userid: number | null,
+                                groupId: number | null) {
+
+  if (!userid || !groupId) return
+
   const attendanceParams = {
     attendance: {
       date: date,
@@ -28,14 +34,15 @@ async function createAttendance(date, userid, groupId) {
   };
 
   try {
-    const response = await $fetch(`${config.public.apiLocal}/api/v1/attendances`, {
+    const response: AttendanceResponse = await $fetch(`${config.public.apiLocal}/api/v1/attendances`, {
       method: "POST",
       headers: getAuthHeaders(),
       body: attendanceParams
     })
+
     if (response.attendance) {
       console.log(response)
-      groupUserAttendancesData.value.push(response.attendance)
+      attendances.value?.attendances.push(response.attendance)
     }
   } catch (error) {
     console.error('APIエラー:', error)

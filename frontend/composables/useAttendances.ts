@@ -1,8 +1,8 @@
-import type { AttendanceResponse } from '~/types/index';
+import type { AttendancesResponse } from '~/types/index';
 
 export function useAttendances(): {
-  attendances: Ref<AttendanceResponse | null>
+  attendances: Ref<AttendancesResponse | null>
 } {
-  const attendances = useState<AttendanceResponse | null>("attendance", () => null);
+  const attendances = useState<AttendancesResponse | null>("attendances", () => null);
   return { attendances };
 }

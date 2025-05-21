@@ -12,7 +12,7 @@
 
 <script setup lang="ts">
 import { watch } from 'vue';
-import type { AttendanceResponse } from '~/types/index';
+import type { AttendancesResponse } from '~/types/index';
 
 const config = useRuntimeConfig()
 const { getAuthHeaders } = useApiClient()
@@ -36,7 +36,7 @@ watch(formatDate, async () => {
 async function getAttendance(date: string, groupId: number) {
   console.log('リクエスト送信', date)
   try {
-    const response: AttendanceResponse = await $fetch(`${config.public.apiLocal}/api/v1/attendances`, {
+    const response: AttendancesResponse = await $fetch(`${config.public.apiLocal}/api/v1/attendances`, {
       headers: getAuthHeaders(),
       query: {
         date: date,

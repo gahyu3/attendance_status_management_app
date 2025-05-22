@@ -12,6 +12,10 @@ export interface User {
   }
 }
 
+export interface ProfileResponse {
+  current_user: User
+}
+
 // /api/v1/sign_out
 export interface LogoutResponse {
   success: boolean

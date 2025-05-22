@@ -1,5 +1,10 @@
 <template>
-  <v-btn icon="mdi mdi-close-thick" variant="tonal" size="x-small" color="red" @click="deleteAttendance(item?.id ?? null)">
+  <v-btn v-if="item"
+          icon="mdi mdi-close-thick"
+          variant="tonal"
+          size="x-small"
+          color="red"
+          @click="deleteAttendance(item.id)">
   </v-btn>
 </template>
 

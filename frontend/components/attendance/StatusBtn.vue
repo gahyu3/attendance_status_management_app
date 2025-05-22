@@ -1,29 +1,29 @@
 <template>
-  <v-btn :color=btnColor(item.attendances_status) @click="updateAttendanceStatus(item.id, item.attendances_status)">
+  <v-btn v-if="item"
+        :color="btnColor(item.attendances_status)"
+        @click="updateAttendanceStatus(item.id, item.attendances_status)">
     {{ statusToJapanese(item.attendances_status) }}
   </v-btn>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
+import type { Attendance, AttendanceResponse, Status, StatusColorMap, StatusMap } from '~/types';
 
-defineProps({
-  item:{}
-})
+defineProps<{ item: Attendance | null }>()
 
 const config = useRuntimeConfig()
 const { getAuthHeaders } = useApiClient()
-
-const groupUserAttendancesData = useState("groupUserAttendancesData");
+const { attendances } = useAttendances()
 
 // UIとバックエンドの両方の出席ステータスを更新する関数
-async function updateAttendanceStatus(attendance_id, currentStatus) {
+async function updateAttendanceStatus(attendance_id: number, currentStatus: Status) {
   const newStatus = changeStatus(currentStatus)
   await updateStatus(attendance_id, newStatus)
 }
 
 // PUTリクエストを送信
-async function updateStatus(attendanceId, newStatus) {
+async function updateStatus(attendanceId: number, newStatus: Status) {
   const attendanceParams = {
     attendance: {
       attendances_status: newStatus,
@@ -31,53 +31,43 @@ async function updateStatus(attendanceId, newStatus) {
   };
 
   try {
-    const response = await $fetch(`${config.public.apiLocal}/api/v1/attendances/${attendanceId}`, {
+    const response: AttendanceResponse = await $fetch(`${config.public.apiLocal}/api/v1/attendances/${attendanceId}`, {
       method: "PUT",
       headers: getAuthHeaders(),
       body: attendanceParams
     })
-    if (response.attendance) {
-      console.log(response)
       const newStatus = response.attendance.attendances_status
-      const index = groupUserAttendancesData.value.findIndex(attendance => attendance.id === attendanceId)
-      groupUserAttendancesData.value[index].attendances_status = newStatus
-    }
-  } catch (error) {
+      const index = attendances.value?.attendances.findIndex(att => att.id === attendanceId)
+      if (index !== undefined && index !== -1 && attendances.value) {
+        attendances.value.attendances[index].attendances_status = newStatus;
+      }
+    } catch (error) {
     console.error('APIエラー:', error)
   }
 }
 
-const statusMap = ref({
+const statusMap:Record<Status, string> = {
   present: "出席中",
   away: "離席中",
   before: "参加前",
   finished: "終了"
-})
+}
 
 // ステータスを日本語化
-function statusToJapanese(status) {
-  if (statusMap.value[status] ) {
-    return statusMap.value[status]
-  } else {
-    console.warn("ステータスが存在しません。")
-  }
+function statusToJapanese(status: Status): string{
+    return statusMap[status]
 }
 
-const statusList = ["present", "away", "before", "finished"]
+const statusList: Status[]  = ["present", "away", "before", "finished"]
 
 // ステータスをトグルする（present → away → before → finished）
-function changeStatus(currentStatus) {
+function changeStatus(currentStatus: Status): Status{
   const currentIndex = statusList.indexOf(currentStatus)
-  // 不明なステーテスの場合indexOfが-1を返すため
-  if (currentIndex === -1) {
-    console.warn("不明なステータスかステータスが存在しません")
-    return null
-  }
   const nextIndex = (currentIndex + 1) % statusList.length
-  return statusList[nextIndex]
+  return statusList[nextIndex] || ""
 }
 
-const statusColorMap = {
+const statusColorMap: StatusColorMap = {
   present: "success",
   away: "yellow",
   before: "grey",
@@ -85,7 +75,7 @@ const statusColorMap = {
 }
 
 // ステータスに応じたボタンの色を返す
-function btnColor(currentStatus) {
-  return statusColorMap[currentStatus] || ""
+function btnColor(currentStatus: Status): string{
+  return statusColorMap[currentStatus]
 }
 </script>

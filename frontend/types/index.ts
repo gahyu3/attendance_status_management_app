@@ -40,13 +40,28 @@ export interface Attendance {
   id: number
   date: string
   schedule: string
-  attendances_status: string
+  attendances_status: Status
   remarks: string
   user_id: number
   group_id: number
   user: User
 }
 
+export interface StatusMap {
+  present: string;
+  away: string;
+  before: string;
+  finished: string;
+}
+
+export interface StatusColorMap {
+  present: string,
+  away: string,
+  before: string,
+  finished: string
+}
+
+export type Status = "present" | "away" | "before" | "finished";
 
 
 

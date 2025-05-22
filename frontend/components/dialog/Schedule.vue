@@ -5,7 +5,8 @@
             style="max-width: 90vw;"
             title="予定編集"
             class="pa-10">
-      <v-form @submit.prevent="updateSchedule(editItem.id,
+      <v-form v-if="editItem.id && editItem.schedule && editItem.remarks"
+              @submit.prevent="updateSchedule(editItem.id,
                                               editItem.schedule,
                                               editItem.remarks)">
         <div class="py-5">
@@ -38,17 +39,19 @@
   </v-dialog>
 </template>
 
-<script setup>
-const props = defineProps({
-                item: {}
-              })
+<script setup lang="ts">
+import type { Attendance, AttendanceResponse } from '~/types'
+
+const props = defineProps<{
+                item: Attendance | null
+              }>()
 
 const config = useRuntimeConfig()
-const dialog = defineModel()
+const dialog = defineModel<boolean>()
 const { selectedDate, formatDate } = useDatePicker()
 const { getAuthHeaders } = useApiClient()
 
-const groupUserAttendancesData = useState("groupUserAttendancesData");
+const { attendances } = useAttendances()
 
 const scheduleList = [
   { title: "終日参加", value: "full_day_attendance"},
@@ -72,19 +75,20 @@ watch(
   { immediate: true }
 )
 
-function copyObject(item) {
+function copyObject(item: Attendance): void {
   editItem.id = item.id
   editItem.schedule = item.schedule
   editItem.remarks = item.remarks
 }
 
-// ダイアログを閉じた時に元の値に戻る
 function onDialogToggle() {
   Object.assign(editItem, props.item)
 }
 
 // PUTリクエストを送信
-async function updateSchedule(attendanceId, schedule, remarks) {
+async function updateSchedule(attendanceId: number,
+                              schedule: string,
+                              remarks: string) {
   const attendanceParams = {
       attendance: {
         schedule: schedule,
@@ -93,21 +97,23 @@ async function updateSchedule(attendanceId, schedule, remarks) {
   };
 
   try {
-    const response = await $fetch(`${config.public.apiLocal}/api/v1/attendances/${attendanceId}`, {
+    const response: AttendanceResponse = await $fetch(`${config.public.apiLocal}/api/v1/attendances/${attendanceId}`, {
       method: "PUT",
       headers: getAuthHeaders(),
       body: attendanceParams
     })
-    if (response.attendance) {
-      console.log(response)
-      const newSchedule = response.attendance.schedule
-      const newRemarks = response.attendance.remarks
-      const index = groupUserAttendancesData.value.findIndex(attendance => attendance.id === attendanceId)
+    console.log(response)
+    const updated = response.attendance;
+    const attendanceList = attendances.value?.attendances;
+    if (!attendanceList) return;
 
-      groupUserAttendancesData.value[index].schedule = newSchedule
-      groupUserAttendancesData.value[index].remarks = newRemarks
-      dialog.value = false
-    }
+    const target = attendanceList.find(att => att.id === attendanceId);
+    if (!target) return;
+
+    target.schedule = updated.schedule;
+    target.remarks = updated.remarks;
+
+    dialog.value = false;
   } catch (error) {
     console.error('APIエラー:', error)
   }

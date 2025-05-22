@@ -39,7 +39,7 @@ export interface AttendanceResponse {
 export interface Attendance {
   id: number
   date: string
-  schedule: string
+  schedule: Schedule
   attendances_status: Status
   remarks: string
   user_id: number
@@ -49,3 +49,6 @@ export interface Attendance {
 
 // attendances_statusの型を限定
 export type Status = "present" | "away" | "before" | "finished";
+
+// Scheduleの型を限定
+export type Schedule = "full_day_attendance" | "morning_attendance" | "afternoon_attendance";

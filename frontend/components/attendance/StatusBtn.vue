@@ -1,14 +1,14 @@
 <template>
   <v-btn v-if="item"
         :color="btnColor(item.attendances_status)"
+        :text="statusToJapanese(item.attendances_status)"
         @click="updateAttendanceStatus(item.id, item.attendances_status)">
-    {{ statusToJapanese(item.attendances_status) }}
   </v-btn>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import type { Attendance, AttendanceResponse, Status, StatusColorMap, StatusMap } from '~/types';
+import type { Attendance, AttendanceResponse, Status } from '~/types';
 
 defineProps<{ item: Attendance | null }>()
 
@@ -23,7 +23,7 @@ async function updateAttendanceStatus(attendance_id: number, currentStatus: Stat
 }
 
 // PUTリクエストを送信
-async function updateStatus(attendanceId: number, newStatus: Status) {
+async function updateStatus(attendanceId: number, newStatus: Status): Promise<void> {
   const attendanceParams = {
     attendance: {
       attendances_status: newStatus,
@@ -46,7 +46,7 @@ async function updateStatus(attendanceId: number, newStatus: Status) {
   }
 }
 
-const statusMap:Record<Status, string> = {
+const statusMap: Record<Status, string> = {
   present: "出席中",
   away: "離席中",
   before: "参加前",
@@ -67,7 +67,7 @@ function changeStatus(currentStatus: Status): Status{
   return statusList[nextIndex] || ""
 }
 
-const statusColorMap: StatusColorMap = {
+const statusColorMap: Record<Status, string> = {
   present: "success",
   away: "yellow",
   before: "grey",

@@ -1,7 +1,9 @@
 <template>
-  <v-btn text="+" @click="createAttendance(formatDate,
-                                          currentUser?.id ?? null,
-                                          selectedGroup?.id ?? null)">
+  <v-btn v-if="currentUser && selectedGroup"
+        text="+"
+        @click="createAttendance(formatDate,
+                                currentUser?.id,
+                                selectedGroup?.id)">
   </v-btn>
 </template>
 
@@ -19,10 +21,8 @@ const { selectedGroup } = useSelectedGroup()
 
 // 出席データを作成して追加
 async function createAttendance(date: string,
-                                userid: number | null,
-                                groupId: number | null) {
-
-  if (!userid || !groupId) return
+                                userid: number,
+                                groupId: number): Promise<void> {
 
   const attendanceParams = {
     attendance: {

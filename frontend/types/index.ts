@@ -47,22 +47,5 @@ export interface Attendance {
   user: User
 }
 
-export interface StatusMap {
-  present: string;
-  away: string;
-  before: string;
-  finished: string;
-}
-
-export interface StatusColorMap {
-  present: string,
-  away: string,
-  before: string,
-  finished: string
-}
-
+// attendances_statusの型を限定
 export type Status = "present" | "away" | "before" | "finished";
-
-
-
-

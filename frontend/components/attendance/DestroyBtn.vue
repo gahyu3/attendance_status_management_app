@@ -19,7 +19,7 @@ const { getAuthHeaders } = useApiClient()
 const { attendances } = useAttendances()
 
 // 出席データを削除
-async function deleteAttendance(attendanceId: number | null): Promise<void> {
+async function deleteAttendance(attendanceId: number): Promise<void> {
 
   if (!attendanceId) return
 

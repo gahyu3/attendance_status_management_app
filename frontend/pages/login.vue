@@ -38,9 +38,10 @@
   </v-main>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 import { navigateTo } from "nuxt/app";
+import type { Token } from '~/types';
 const config = useRuntimeConfig()
 
 const form = ref({
@@ -52,10 +53,14 @@ const errorMessage = ref("")
 
 // ログインのPOSTリクエスト送信
 async function formSubmit() {
-  let tokenHeaders = {}
+  let tokenHeaders: Token = {
+      'access-token': null,
+      client: null,
+      uid: null
+  }
 
   try {
-    const response = await $fetch(`${config.public.apiLocal}/api/v1/sign_in`, {
+    await $fetch(`${config.public.apiLocal}/api/v1/sign_in`, {
       method: "POST",
       body: form.value,
       onResponse({ response }) {
@@ -82,7 +87,7 @@ async function formSubmit() {
       throw new Error('tokenがありません')
     }
 
-  } catch (error) {
+  } catch (error: any) {
     console.error(error)
     errorMessage.value = error.message
   }

@@ -51,8 +51,16 @@ export interface Attendance {
   user: User
 }
 
+// リクエストtoken
+export interface Token {
+  'access-token': string | null,
+  client: string | null,
+  uid: string | null
+}
+
 // attendances_statusの型を限定
 export type Status = "present" | "away" | "before" | "finished";
 
 // Scheduleの型を限定
 export type Schedule = "full_day_attendance" | "morning_attendance" | "afternoon_attendance";
+

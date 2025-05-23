@@ -5,8 +5,7 @@
             style="max-width: 90vw;"
             title="予定編集"
             class="pa-10">
-      <v-form v-if="editItem.id && editItem.schedule && editItem.remarks"
-              @submit.prevent="updateSchedule(editItem.id,
+      <v-form @submit.prevent="updateSchedule(editItem.id,
                                               editItem.schedule,
                                               editItem.remarks)">
         <div class="py-5">
@@ -86,9 +85,12 @@ function onDialogToggle() {
 }
 
 // PUTリクエストを送信
-async function updateSchedule(attendanceId: number,
-                              schedule: string,
-                              remarks: string) {
+async function updateSchedule(attendanceId?: number,
+                              schedule?: string,
+                              remarks?: string) {
+
+  if (attendanceId == null || schedule == null) return
+
   const attendanceParams = {
       attendance: {
         schedule: schedule,

@@ -7,7 +7,7 @@ class Api::V1::AttendancesController < ApplicationController
         group_user_attendances = group.attendances.includes(:user).where(date: params[:date])
 
         if group
-          render json: { attendance: group_user_attendances.as_json(include: :user) }
+          render json: { attendances: group_user_attendances.as_json(include: :user) }
         else
           render json: { error: "Group not found" }, status: :not_found
         end

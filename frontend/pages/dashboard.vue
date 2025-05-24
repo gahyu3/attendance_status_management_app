@@ -4,8 +4,7 @@
   <SideBar />
   <v-main>
     <DateField />
-    <div v-if="groupUserAttendancesData">
-      <v-data-table :headers="headers" :items="groupUserAttendancesData">
+      <v-data-table :headers="headers" :items="attendances?.attendances">
         <template #item.avatar="{ item }">
           <Avatar :user="item.user" />
         </template>
@@ -23,18 +22,14 @@
         </template>
       </v-data-table>
       <AttendanceCreateBtn />
-    </div>
   </v-main>
 
 </template>
 
-<script setup>
-import { ref } from 'vue';
-const config = useRuntimeConfig()
-const currentUser = useState("currentUser");
-const selectedGroup = useState("selectedGroup");
-const groupUserAttendancesData = useState("groupUserAttendancesData");
-const { formatDate } = useDatePicker()
+<script setup lang="ts">
+const { currentUser } = useCurrentUser()
+const { attendances } = useAttendances()
+
 
 definePageMeta({
   middleware: [
@@ -51,9 +46,8 @@ const headers = [
   { title: "", value: "destroy" }
 ];
 
-function isUserCurrentUser(userId) {
-  return userId === currentUser.value.id
+function isUserCurrentUser(userId: number): boolean {
+  return userId === currentUser.value?.id
 };
-
 
 </script>

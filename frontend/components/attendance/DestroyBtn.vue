@@ -1,30 +1,38 @@
 <template>
-  <v-btn icon="mdi mdi-close-thick" variant="tonal" size="x-small" color="red" @click="deleteAttendance(item.id)">
+  <v-btn v-if="item"
+          icon="mdi mdi-close-thick"
+          variant="tonal"
+          size="x-small"
+          color="red"
+          @click="deleteAttendance(item.id)">
   </v-btn>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
-defineProps({
-  item:{}
-})
+import type { Attendance } from '~/types';
+
+defineProps<{ item: Attendance | null }>()
 
 const config = useRuntimeConfig()
 const { getAuthHeaders } = useApiClient()
-
-const groupUserAttendancesData = useState("groupUserAttendancesData");
+const { attendances } = useAttendances()
 
 // 出席データを削除
-async function deleteAttendance(attendanceId) {
+async function deleteAttendance(attendanceId: number): Promise<void> {
+
+  if (!attendanceId) return
+
   try {
-    const response = await $fetch(`${config.public.apiLocal}/api/v1/attendances/${attendanceId}`, {
+    await $fetch(`${config.public.apiLocal}/api/v1/attendances/${attendanceId}`, {
       method: "DELETE",
       headers: getAuthHeaders(),
     })
-    if (response) {
-      console.log(response)
-      const index = groupUserAttendancesData.value.findIndex(attendance => attendance.id === attendanceId)
-      groupUserAttendancesData.value.splice(index, 1)
+    // attendances から該当データを削除
+    const list = attendances.value?.attendances;
+    const index = list?.findIndex(att => att.id === attendanceId);
+    if (list && index !== undefined && index >= 0) {
+      list.splice(index, 1);
     }
   } catch (error) {
     console.error('APIエラー:', error)

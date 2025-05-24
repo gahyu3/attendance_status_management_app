@@ -20,7 +20,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_03_12_124956) do
     t.integer "attendances_status", default: 0
     t.string "remarks"
     t.bigint "user_id", null: false
-    t.bigint "group_id", null: false
+    t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["group_id"], name: "index_attendances_on_group_id"

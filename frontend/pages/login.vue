@@ -33,6 +33,7 @@
             </v-btn>
           </v-layout>
         </v-form>
+        <GoogleBtn />
       </v-sheet>
     </v-container>
   </v-main>

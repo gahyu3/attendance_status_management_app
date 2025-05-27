@@ -6,6 +6,7 @@ Rails.application.routes.draw do
       resources :groups, only: [:index]
       resources :attendances, only: [:index, :create, :update, :destroy]
       resource :profile, only: [:show, :update]
+      post "login", to: "auth#login"
     end
   end
 end

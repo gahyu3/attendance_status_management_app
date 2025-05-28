@@ -13,7 +13,7 @@ class Api::V1::AttendancesController < ApplicationController
       end
 
       attendances = group.attendances.includes(:user).where(date: params[:date])
-      render json: { attendances: attendances }, status: :ok
+      render json: { attendances: attendances.as_json(include: :user) }, status: :ok
     end
 
     def create

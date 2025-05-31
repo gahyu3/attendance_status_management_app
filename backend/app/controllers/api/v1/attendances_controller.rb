@@ -1,42 +1,40 @@
 class Api::V1::AttendancesController < ApplicationController
     before_action :authenticate_user!
+    before_action :set_attendance, only: [:update, :destroy]
 
     def index
-      if params[:group_id].present? && params[:date].present?
-        group = Group.find(params[:group_id])
-        group_user_attendances = group.attendances.includes(:user).where(date: params[:date])
-
-        if group
-          render json: { attendances: group_user_attendances.as_json(include: :user) }
-        else
-          render json: { error: "Group not found" }, status: :not_found
-        end
-      else
-        render json: { error: "group_id and date must be provided" }, status: :bad_request
+      unless params[:group_id].present? && params[:date].present?
+        return render json: { error: "group_idまたはdateのパラメータがありません" }, status: :bad_request
       end
+
+      group = Group.find_by(id: params[:group_id])
+      unless group
+        return render json: { error: "グループが見つかりません" }, status: :not_found
+      end
+
+      attendances = group.attendances.includes(:user).where(date: params[:date])
+      render json: { attendances: attendances.as_json(include: :user) }, status: :ok
     end
 
     def create
       attendance = Attendance.new(attendance_params)
       if attendance.save
-        render json: { attendance: attendance.as_json(include: :user) }, status: :ok
+        render json: { attendance: attendance.as_json(include: :user) }, status: :created
       else
-        render json: { error: attendance.errors.full_messages }, status: :bad_request
+        render json: { error: attendance.errors.full_messages }, status: :unprocessable_entity
       end
     end
 
     def update
-      attendance = Attendance.find(params[:id])
-      if attendance.update(attendance_params)
-        render json: { attendance: attendance.as_json(include: :user) }, status: :ok
+      if @attendance.update(attendance_params)
+        render json: { attendance: @attendance.as_json(include: :user) }, status: :ok
       else
-        render json: { error: attendance.errors.full_messages }, status: :bad_request
+        render json: { error: @attendance.errors.full_messages }, status: :unprocessable_entity
       end
     end
 
     def destroy
-      attendance = Attendance.find(params[:id])
-      attendance.destroy!
+      @attendance.destroy!
       render json: { message: "削除に成功しました" }, status: :ok
     rescue ActiveRecord::RecordNotFound
       render json: { message: "出席データが見つかりません" }, status: :not_found
@@ -55,5 +53,9 @@ class Api::V1::AttendancesController < ApplicationController
         :user_id,
         :group_id
       )
+    end
+
+    def set_attendance
+      @attendance = Attendance.find(params[:id])
     end
 end

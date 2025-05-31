@@ -26,15 +26,15 @@ class Api::V1::AttendancesController < ApplicationController
     end
 
     def update
-      if attendance.update(attendance_params)
-        render json: { attendance: attendance.as_json(include: :user) }, status: :ok
+      if @attendance.update(attendance_params)
+        render json: { attendance: @attendance.as_json(include: :user) }, status: :ok
       else
-        render json: { error: attendance.errors.full_messages }, status: :unprocessable_entity
+        render json: { error: @attendance.errors.full_messages }, status: :unprocessable_entity
       end
     end
 
     def destroy
-      attendance.destroy!
+      @attendance.destroy!
       render json: { message: "削除に成功しました" }, status: :ok
     rescue ActiveRecord::RecordNotFound
       render json: { message: "出席データが見つかりません" }, status: :not_found
@@ -56,6 +56,6 @@ class Api::V1::AttendancesController < ApplicationController
     end
 
     def set_attendance
-      attendance = Attendance.find(params[:id])
+      @attendance = Attendance.find(params[:id])
     end
 end

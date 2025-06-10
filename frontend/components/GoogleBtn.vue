@@ -24,7 +24,7 @@ async function googleLogin(response: any) {
 
   const token: LoginResponse = response.credential
   try {
-    await $fetch(`${config.public.apiLocal}/api/v1/login`, {
+    await $fetch(`${config.public.apiBase}/api/v1/login`, {
       method: "POST",
       body: {
         id_token: token

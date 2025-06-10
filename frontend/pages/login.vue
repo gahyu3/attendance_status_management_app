@@ -61,7 +61,7 @@ async function formSubmit() {
   }
 
   try {
-    await $fetch(`${config.public.apiLocal}/api/v1/sign_in`, {
+    await $fetch(`${config.public.apiBase}/api/v1/sign_in`, {
       method: "POST",
       body: form.value,
       onResponse({ response }) {

@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    const response = await $fetch(`${config.public.apiBase}/api/v1/validate_token`, {
+    const response = await $fetch(`${config.public.apiLocal}/api/v1/validate_token`, {
       method: 'GET',
       headers: {
         'access-token': accessToken,

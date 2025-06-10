@@ -29,7 +29,7 @@ if (data.value) {
 
 async function logout(): Promise<void> {
   try {
-    const response: LogoutResponse = await $fetch(`${config.public.apiLocal}/api/v1/sign_out`, {
+    const response: LogoutResponse = await $fetch(`${config.public.apiBase}/api/v1/sign_out`, {
       method: "DELETE",
       headers: getAuthHeaders()
     })

@@ -36,7 +36,7 @@ watch(formatDate, async () => {
 async function getAttendance(date: string, groupId: number) {
   console.log('リクエスト送信', date)
   try {
-    const response: AttendancesResponse = await $fetch(`${config.public.apiLocal}/api/v1/attendances`, {
+    const response: AttendancesResponse = await $fetch(`${config.public.apiBase}/api/v1/attendances`, {
       headers: getAuthHeaders(),
       query: {
         date: date,

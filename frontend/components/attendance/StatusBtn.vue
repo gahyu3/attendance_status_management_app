@@ -31,7 +31,7 @@ async function updateStatus(attendanceId: number, newStatus: Status): Promise<vo
   };
 
   try {
-    const response: AttendanceResponse = await $fetch(`${config.public.apiLocal}/api/v1/attendances/${attendanceId}`, {
+    const response: AttendanceResponse = await $fetch(`${config.public.apiBase}/api/v1/attendances/${attendanceId}`, {
       method: "PUT",
       headers: getAuthHeaders(),
       body: attendanceParams

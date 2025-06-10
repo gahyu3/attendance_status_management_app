@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 401, message: 'Unauthorized' })
   }
 
-  const response = await $fetch(`${config.public.apiBase}/api/v1/groups`, {
+  const response = await $fetch(`${config.public.apiLocal}/api/v1/groups`, {
     method: 'GET',
     headers: {
       'access-token': accessToken,

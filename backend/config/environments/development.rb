@@ -74,4 +74,6 @@ Rails.application.configure do
   # config.generators.apply_rubocop_autocorrect_after_generate!
 
   config.hosts << "backend"
+  config.hosts << "attendance-app-backend.fly.dev"
+
 end

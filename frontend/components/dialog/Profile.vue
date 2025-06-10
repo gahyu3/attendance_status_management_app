@@ -58,7 +58,7 @@ watch(
   (user) => {
     if (user) {
       copyObject(user)
-      const imageUrl = `${config.public.apiLocal}${user.avatar_image?.url}`
+      const imageUrl = `${config.public.apiBase}${user.avatar_image?.url}`
 
       image.value = imageUrl
       originalImage.value = imageUrl
@@ -103,7 +103,7 @@ async function updateUser(userName: string): Promise<void> {
   }
 
   try {
-    const response: ProfileResponse = await $fetch(`${config.public.apiLocal}/api/v1/profile`,{
+    const response: ProfileResponse = await $fetch(`${config.public.apiBase}/api/v1/profile`,{
       method: "PUT",
       headers: getAuthHeaders(),
       body: formData

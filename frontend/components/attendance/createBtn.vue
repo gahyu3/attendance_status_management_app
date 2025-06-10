@@ -34,7 +34,7 @@ async function createAttendance(date: string,
   };
 
   try {
-    const response: AttendanceResponse = await $fetch(`${config.public.apiLocal}/api/v1/attendances`, {
+    const response: AttendanceResponse = await $fetch(`${config.public.apiBase}/api/v1/attendances`, {
       method: "POST",
       headers: getAuthHeaders(),
       body: attendanceParams

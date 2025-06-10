@@ -24,7 +24,7 @@ async function deleteAttendance(attendanceId: number): Promise<void> {
   if (!attendanceId) return
 
   try {
-    await $fetch(`${config.public.apiLocal}/api/v1/attendances/${attendanceId}`, {
+    await $fetch(`${config.public.apiBase}/api/v1/attendances/${attendanceId}`, {
       method: "DELETE",
       headers: getAuthHeaders(),
     })

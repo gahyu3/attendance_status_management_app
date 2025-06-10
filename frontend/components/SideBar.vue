@@ -65,7 +65,7 @@ function setGroup(group: Group): void {
 async function getAttendance(date: string, groupId: number): Promise<void> {
 
   try {
-    const response: AttendancesResponse = await $fetch(`${config.public.apiLocal}/api/v1/attendances`, {
+    const response: AttendancesResponse = await $fetch(`${config.public.apiBase}/api/v1/attendances`, {
       headers: getAuthHeaders(),
       query: {
         date: date,

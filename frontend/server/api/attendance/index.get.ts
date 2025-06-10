@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 401, message: 'dataかgroupIdがありません' })
   }
 
-  const response = await $fetch(`${config.public.apiBase}/api/v1/attendances`, {
+  const response = await $fetch(`${config.public.apiLocal}/api/v1/attendances`, {
     method: 'GET',
     headers: {
       'access-token': accessToken,

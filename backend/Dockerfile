@@ -23,3 +23,9 @@ COPY entrypoint.sh /usr/bin/
 # entrypoint.shを実行する
 RUN chmod +x /usr/bin/entrypoint.sh
 ENTRYPOINT ["entrypoint.sh"]
+
+#コンテナがリッスンするPORTを指定
+EXPOSE 3000
+
+#コンテナ作成時にサーバーを立てる
+CMD ["rails", "server", "-b", "0.0.0.0", "-p", "3000"]

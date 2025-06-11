@@ -1,7 +1,4 @@
 <template>
-
-  <AppHeader />
-  <SideBar />
   <v-main>
     <DateField />
       <v-data-table :headers="headers" :items="attendances?.attendances">

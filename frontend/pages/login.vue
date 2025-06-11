@@ -43,6 +43,11 @@
 import { ref } from 'vue'
 import { navigateTo } from "nuxt/app";
 import type { Token } from '~/types';
+
+definePageMeta({
+  layout: 'login'
+})
+
 const config = useRuntimeConfig()
 
 const form = ref({

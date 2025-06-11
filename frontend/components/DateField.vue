@@ -1,13 +1,19 @@
 <template>
-  <v-menu :close-on-content-click="false">
-    <template v-slot:activator="{ props }">
-      <v-btn v-bind="props" class="cursor-pointer">
-        <client-only>{{ formatDate }}</client-only>
-      </v-btn>
-    </template>
-    <v-date-picker v-model="selectedDate" color="primary"></v-date-picker>
-  </v-menu>
-  <v-btn @click="GetToday">今日</v-btn>
+  <div>
+    <v-menu :close-on-content-click="false">
+      <template v-slot:activator="{ props }">
+        <v-btn v-bind="props" class="cursor-pointer">
+          <client-only>{{ formatDate }}</client-only>
+        </v-btn>
+      </template>
+      <v-date-picker v-model="selectedDate" color="primary"></v-date-picker>
+    </v-menu>
+    <div>
+      <v-btn size="small" class="rounded-s-xl" @click="dayBefore">-</v-btn>
+      <v-btn size="small" class="px-8" @click="GetToday">今日</v-btn>
+      <v-btn size="small" class="rounded-e-xl" @click="nextDay">+</v-btn>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -24,6 +30,18 @@ const { selectedGroup } = useSelectedGroup()
 // 現在の日付を獲得
 function GetToday() {
   selectedDate.value = new Date()
+}
+
+function nextDay() {
+  const day = new Date(selectedDate.value)
+  day.setDate(day.getDate() + 1)
+  selectedDate.value = day
+}
+
+function dayBefore() {
+  const day = new Date(selectedDate.value)
+  day.setDate(day.getDate() - 1)
+  selectedDate.value = day
 }
 
 watch(formatDate, async () => {

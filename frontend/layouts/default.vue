@@ -6,5 +6,4 @@
       <NuxtPage />
     </div>
   </v-main>
-
 </template>

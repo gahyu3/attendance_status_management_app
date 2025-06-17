@@ -64,3 +64,9 @@ export type Status = "present" | "away" | "before" | "finished";
 // Scheduleの型を限定
 export type Schedule = "full_day_attendance" | "morning_attendance" | "afternoon_attendance";
 
+// 月カレンダーイベント
+export interface EventItem {
+  title: Schedule;
+  start: Date;
+  end: Date;
+};

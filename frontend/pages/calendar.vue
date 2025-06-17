@@ -4,16 +4,18 @@
   </NuxtLink>
   <v-btn @click="changeAttendance(attendanceList)">aaa</v-btn>
   {{ events }}
+  {{ current }}
   <v-calendar ref="calendar"
-          :v-model="today"
-          :events="events"
-          color="primary"
-          type="month">
-  <template #event="{ event }">
-      <div class="px-2 py-1 rounded bg-green text-center">
-        {{ scheduleToJapanese(event.title as Schedule) }}
-      </div>
-  </template>
+              type="month"
+              :v-model="current"
+              :events="events"
+              color="primary"
+              >
+    <template #event="{ event }">
+        <div class="px-2 py-1 rounded bg-green text-center">
+          {{ scheduleToJapanese(event.title as Schedule) }}
+        </div>
+    </template>
   </v-calendar>
 </template>
 
@@ -32,7 +34,7 @@ definePageMeta({
 const { selectedDate } = useDatePicker()
 
 const calendar = ref()
-const today = ref(new Date())
+const current = ref('2025-09-02')
 const attendanceList = [{
   id: 10,
   date: "2025-06-13",

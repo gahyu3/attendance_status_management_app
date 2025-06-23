@@ -27,5 +27,16 @@ export default defineNuxtConfig({
       apiLocal: process.env.NUXT_PUBLIC_API_LOCAL,
       googleClientId: process.env.GOOGLE_CLIENT_ID
     }
+  },
+  app: {
+    head: {
+      script: [
+        {
+          src: 'https://accounts.google.com/gsi/client',
+          async: true,
+          defer: true,
+        }
+      ]
+    }
   }
 })

@@ -1,12 +1,17 @@
 class Api::V1::AuthController < ApplicationController
   require 'googleauth/id_tokens'
+  require 'net/http'
+  require 'uri'
+  require 'json'
+
+  GOOGLE_TOKEN_ENDPOINT = 'https://oauth2.googleapis.com/token'
 
   # SECURE_EMAIL = ENV['SECURE_EMAIL']
 
   def login
-    id_token = params[:id_token]
-
-    payload = Google::Auth::IDTokens.verify_oidc(id_token, aud: ENV['GOOGLE_CLIENT_ID'])
+    authorization_code = params[:code]
+    tokens = exchange_code_for_tokens(authorization_code)
+    payload = Google::Auth::IDTokens.verify_oidc(tokens["id_token"], aud: ENV['GOOGLE_CLIENT_ID'])
 
     # emailが許可たされたものか検証
     # unless payload['email'] == SECURE_EMAIL
@@ -26,5 +31,23 @@ class Api::V1::AuthController < ApplicationController
 
     rescue Google::Auth::IDTokens::SignatureError
       render json: { error: '無効なtokenです' }, status: :unauthorized
-    end
+  end
+
+private
+
+  def exchange_code_for_tokens(code)
+    uri = URI(GOOGLE_TOKEN_ENDPOINT)
+    response = Net::HTTP.post_form(uri, {
+      code: code,
+      client_id: ENV['GOOGLE_CLIENT_ID'],
+      client_secret: ENV['GOOGLE_CLIENT_SECRET'],
+      redirect_uri: ENV['GOOGLE_REDIRECT_URI'],
+      grant_type: 'authorization_code'
+    })
+
+    json = JSON.parse(response.body)
+    raise "Google token error: #{json}" if json['error']
+
+    json
+  end
 end

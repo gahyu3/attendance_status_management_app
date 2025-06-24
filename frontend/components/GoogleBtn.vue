@@ -1,11 +1,14 @@
 <template>
   <ClientOnly>
-    <GoogleLogin :callback="callback"/>
+    <GoogleLogin :callback="callback">
+      <v-btn color="green" prepend-icon="mdi mdi-google">ログイン</v-btn>
+    </GoogleLogin>
   </ClientOnly>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { GoogleLogin } from "vue3-google-login"
 import type { LoginResponse, Token } from '~/types';
 const config = useRuntimeConfig()
 
@@ -14,6 +17,39 @@ const callback = (response: any) => {
     googleLogin(response)
   }
   console.log("Handle the response", response)
+}
+
+// const login = () => {
+//   googleSdkLoaded((google) => {
+//     google.accounts.id.initialize({
+//       client_id: useRuntimeConfig().public.googleClientId,
+//       callback: (response: any) => {
+//         if (response) {
+//           googleLogin(response)
+//         }
+//         console.log("Handle the response", response)
+//       },
+//       ux_mode: 'popup'
+//     }),
+//     google.accounts.id.prompt();
+//   })
+// }
+
+// const login = () => {
+//   googleSdkLoaded((google) => {
+//     google.accounts.oauth2.initCodeClient({
+//       client_id: useRuntimeConfig().public.googleClientId,
+//       scope: 'email profile openid',
+//       callback: (response) => {
+//         console.log("Handle the response", response)
+//       }
+//     }).requestCode()
+//   })
+// }
+
+// onMounted(() => {
+//   login
+// })
 
 async function googleLogin(response: any) {
   let tokenHeaders: Token = {
@@ -22,12 +58,13 @@ async function googleLogin(response: any) {
       uid: null
   }
 
-  const token: LoginResponse = response.credential
+  const code: LoginResponse = response.code
+
   try {
     await $fetch(`${config.public.apiBase}/api/v1/login`, {
       method: "POST",
       body: {
-        id_token: token
+        code: code
       },
     onResponse({ response }) {
       tokenHeaders = {
@@ -55,7 +92,6 @@ async function googleLogin(response: any) {
   } catch (error) {
     console.error(error)
   }
-}
 }
 
 </script>

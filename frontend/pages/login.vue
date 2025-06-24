@@ -9,7 +9,7 @@
       <div class="text-center mb-4">
         <h1>ログイン</h1>
       </div>
-        <v-form @submit.prevent="formSubmit">
+        <!-- <v-form @submit.prevent="formSubmit">
           <v-text-field
             v-model="form.email"
             label="メールアドレス"
@@ -32,8 +32,10 @@
                   ログイン
             </v-btn>
           </v-layout>
-        </v-form>
-        <GoogleBtn />
+        </v-form> -->
+        <div class="d-flex justify-center">
+          <GoogleBtn />
+        </div>
       </v-sheet>
     </v-container>
   </v-main>

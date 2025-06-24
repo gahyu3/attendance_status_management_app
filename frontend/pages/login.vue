@@ -33,7 +33,9 @@
             </v-btn>
           </v-layout>
         </v-form> -->
-        <GoogleBtn />
+        <div class="d-flex justify-center">
+          <GoogleBtn />
+        </div>
       </v-sheet>
     </v-container>
   </v-main>

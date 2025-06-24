@@ -1,7 +1,7 @@
 <template>
   <ClientOnly>
     <GoogleLogin :callback="callback">
-      <v-btn>google</v-btn>
+      <v-btn color="green" prepend-icon="mdi mdi-google">ログイン</v-btn>
     </GoogleLogin>
   </ClientOnly>
 </template>

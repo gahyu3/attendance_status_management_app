@@ -64,7 +64,7 @@ async function googleLogin(response: any) {
     await $fetch(`${config.public.apiBase}/api/v1/login`, {
       method: "POST",
       body: {
-        id_token: code
+        code: code
       },
     onResponse({ response }) {
       tokenHeaders = {

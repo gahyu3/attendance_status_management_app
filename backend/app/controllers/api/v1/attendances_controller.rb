@@ -42,6 +42,22 @@ class Api::V1::AttendancesController < ApplicationController
       render json: { message: "削除に失敗しました" }, status: :unprocessable_entity
     end
 
+    def calendar
+      begin
+        day = Date.strptime(calendar_params[:date], '%Y-%m-%d')
+      rescue ArgumentError
+        return render json: { error: "日付の形式が不正です" }, status: :unprocessable_entity
+      end
+      start_date = day.beginning_of_month
+      end_date = day.end_of_month
+
+      group_id = params[:group_id]
+      user_id = params[:user_id]
+      @attendances = Attendance.where(user_id: user_id, group_id: group_id, date: start_date..end_date)
+
+      render json: {attendances: @attendances }, status: :ok
+    end
+
     private
 
     def attendance_params

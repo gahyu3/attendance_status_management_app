@@ -122,6 +122,8 @@ GEM
     enum_help (0.0.19)
       activesupport (>= 3.0.0)
     erubi (1.13.1)
+    excon (1.2.7)
+      logger
     factory_bot (6.5.1)
       activesupport (>= 6.1.0)
     factory_bot_rails (6.4.4)
@@ -137,6 +139,23 @@ GEM
       net-http (>= 0.5.0)
     ffi (1.17.1-aarch64-linux-gnu)
     ffi (1.17.1-x86_64-linux-gnu)
+    fog-aws (3.32.0)
+      base64 (~> 0.2.0)
+      fog-core (~> 2.6)
+      fog-json (~> 1.1)
+      fog-xml (~> 0.1)
+    fog-core (2.6.0)
+      builder
+      excon (~> 1.0)
+      formatador (>= 0.2, < 2.0)
+      mime-types
+    fog-json (1.2.0)
+      fog-core
+      multi_json (~> 1.10)
+    fog-xml (0.1.5)
+      fog-core
+      nokogiri (>= 1.5.11, < 2.0.0)
+    formatador (1.1.0)
     globalid (1.2.1)
       activesupport (>= 6.1)
     google-cloud-env (2.3.0)
@@ -164,18 +183,6 @@ GEM
     json (2.10.1)
     jwt (2.10.1)
       base64
-    kaminari (1.2.2)
-      activesupport (>= 4.1.0)
-      kaminari-actionview (= 1.2.2)
-      kaminari-activerecord (= 1.2.2)
-      kaminari-core (= 1.2.2)
-    kaminari-actionview (1.2.2)
-      actionview
-      kaminari-core (= 1.2.2)
-    kaminari-activerecord (1.2.2)
-      activerecord
-      kaminari-core (= 1.2.2)
-    kaminari-core (1.2.2)
     language_server-protocol (3.17.0.4)
     lint_roller (1.1.0)
     logger (1.6.6)
@@ -189,6 +196,10 @@ GEM
       net-smtp
     marcel (1.0.4)
     method_source (1.1.0)
+    mime-types (3.7.0)
+      logger
+      mime-types-data (~> 3.2025, >= 3.2025.0507)
+    mime-types-data (3.2025.0617)
     mini_magick (5.2.0)
       benchmark
       logger
@@ -275,10 +286,6 @@ GEM
       zeitwerk (~> 2.6)
     rainbow (3.1.1)
     rake (13.2.1)
-    ransack (4.3.0)
-      activerecord (>= 6.1.5)
-      activesupport (>= 6.1.5)
-      i18n
     rdoc (6.12.0)
       psych (>= 4.0.0)
     regexp_parser (2.10.0)
@@ -363,15 +370,14 @@ DEPENDENCIES
   enum_help
   factory_bot_rails
   faker
+  fog-aws
   googleauth
-  kaminari
   mini_magick
   pg (~> 1.1)
   pry-rails
   puma (>= 5.0)
   rack-cors
   rails (~> 7.2.2, >= 7.2.2.1)
-  ransack
   rspec-rails
   rubocop
   tzinfo-data

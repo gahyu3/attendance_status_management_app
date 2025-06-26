@@ -4,7 +4,11 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :groups, only: [:index]
-      resources :attendances, only: [:index, :create, :update, :destroy]
+      resources :attendances, only: [:index, :create, :update, :destroy] do
+        collection do
+          get :calendar
+        end
+      end
       resource :profile, only: [:show, :update]
       post "login", to: "auth#login"
     end

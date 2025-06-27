@@ -1,12 +1,11 @@
 class Api::V1::AttendancesController < ApplicationController
     before_action :authenticate_user!
     before_action :set_attendance, only: [:update, :destroy]
+    before_action :validate_date, only: [:calendar]
+    before_action :validate_user_id, only: [:index, :calendar]
+    before_action :validate_group_id, only: [:index, :calendar]
 
     def index
-      unless params[:group_id].present? && params[:date].present?
-        return render json: { error: "group_idまたはdateのパラメータがありません" }, status: :bad_request
-      end
-
       group = Group.find_by(id: params[:group_id])
       unless group
         return render json: { error: "グループが見つかりません" }, status: :not_found
@@ -44,7 +43,7 @@ class Api::V1::AttendancesController < ApplicationController
 
     def calendar
       begin
-        day = Date.strptime(calendar_params[:date], '%Y-%m-%d')
+        day = Date.strptime(params[:date], '%Y-%m-%d')
       rescue ArgumentError
         return render json: { error: "日付の形式が不正です" }, status: :unprocessable_entity
       end
@@ -74,4 +73,20 @@ class Api::V1::AttendancesController < ApplicationController
     def set_attendance
       @attendance = Attendance.find(params[:id])
     end
+
+    def validate_date
+      return if params[:date].present?
+      render json: { error: "パラメーターが不足しています" }, status: :bad_request
+    end
+
+    def validate_user_id
+      return if params[:user_id].present?
+      render json: { error: "パラメーターが不足しています" }, status: :bad_request
+    end
+
+    def validate_group_id
+      return if params[:group_id].present?
+      render json: { error: "パラメーターが不足しています" }, status: :bad_request
+    end
+
 end

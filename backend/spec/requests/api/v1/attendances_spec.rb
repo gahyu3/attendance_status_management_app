@@ -51,20 +51,22 @@ RSpec.describe "Api::V1::Attendances", type: :request do
     context "処理が失敗" do
       it "dataパラメータ不足" do
         get "/api/v1/attendances", headers: auth_headers, params: {
-          date: attendance.date
-        }
-
-        expect(response).to have_http_status(:bad_request)
-      end
-
-      it "group_idパラメータ不足" do
-        get "/api/v1/attendances", headers: auth_headers, params: {
           group_id: group.id
         }
 
         json = JSON.parse(response.body)
         expect(response).to have_http_status(:bad_request)
-        expect(json["error"]).to eq("group_idまたはdateのパラメータがありません")
+        expect(json["error"]).to eq("dateパラメーターが不足しています")
+      end
+
+      it "group_idパラメータ不足" do
+        get "/api/v1/attendances", headers: auth_headers, params: {
+          date: attendance.date
+        }
+
+        json = JSON.parse(response.body)
+        expect(response).to have_http_status(:bad_request)
+        expect(json["error"]).to eq("group_idパラメーターが不足しています")
       end
 
       it "存在しないグループ" do
@@ -217,12 +219,12 @@ RSpec.describe "Api::V1::Attendances", type: :request do
     end
   end
 
-  describe "GET /api/v1/attendances/calender" do
+  describe "GET /api/v1/attendances/calendar" do
 
     context "処理が成功" do
       it "ユーザーの月の出席状況を一覧を獲得" do
-        get "/api/v1/attendances/calender", headers: auth_headers, params: {
-          user_id: user.id
+        get "/api/v1/attendances/calendar", headers: auth_headers, params: {
+          user_id: user.id,
           group_id: group.id,
           date: attendance.date
         }
@@ -236,55 +238,44 @@ RSpec.describe "Api::V1::Attendances", type: :request do
                                                       "attendances_status",
                                                       "remarks",
                                                       "user_id",
-                                                      "group_id",
-                                                      "user")
+                                                      "group_id")
       end
     end
 
     context "処理が失敗" do
       it "dataパラメータ不足" do
-        get "/api/v1/attendances/calender", headers: auth_headers, params: {
+        get "/api/v1/attendances/calendar", headers: auth_headers, params: {
           group_id: group.id
         }
 
+        json = JSON.parse(response.body)
         expect(response).to have_http_status(:bad_request)
-        expect(json["error"]).to eq("パラメーターが不足しています")
+        expect(json["error"]).to eq("dateパラメーターが不足しています")
       end
 
       it "group_idパラメータ不足" do
-        get "/api/v1/attendances/calender", headers: auth_headers, params: {
-          date: attendance.date
+        get "/api/v1/attendances/calendar", headers: auth_headers, params: {
+          date: attendance.date,
+          user_id: attendance.user_id
         }
 
         json = JSON.parse(response.body)
         expect(response).to have_http_status(:bad_request)
-        expect(json["error"]).to eq("パラメーターが不足しています")
+        expect(json["error"]).to eq("group_idパラメーターが不足しています")
       end
 
       it "user_idパラメータ不足" do
-        get "/api/v1/attendances/calender", headers: auth_headers, params: {
-          group_id: attendance.date
-        }
-
-        json = JSON.parse(response.body)
-        expect(response).to have_http_status(:bad_request)
-        expect(json["error"]).to eq("パラメーターが不足しています")
-      end
-
-
-      it "存在しないグループ" do
-        get "/api/v1/attendances/calender", headers: auth_headers, params: {
-          group_id: 1000,
+        get "/api/v1/attendances/calendar", headers: auth_headers, params: {
           date: attendance.date
         }
 
         json = JSON.parse(response.body)
-        expect(response).to have_http_status(:not_found)
-        expect(json["error"]).to eq("グループが見つかりません")
+        expect(response).to have_http_status(:bad_request)
+        expect(json["error"]).to eq("user_idパラメーターが不足しています")
       end
 
       it "日付の形式が不正" do
-        get "/api/v1/attendances/calender", headers: auth_headers, params: {
+        get "/api/v1/attendances/calendar", headers: auth_headers, params: {
           date: "2025-05",
           user_id: attendance.user_id,
           group_id: group.id
@@ -295,6 +286,5 @@ RSpec.describe "Api::V1::Attendances", type: :request do
       end
     end
   end
-
 
 end

@@ -1,8 +1,8 @@
 class Api::V1::AttendancesController < ApplicationController
     before_action :authenticate_user!
     before_action :set_attendance, only: [:update, :destroy]
-    before_action :validate_date, only: [:calendar]
-    before_action :validate_user_id, only: [:index, :calendar]
+    before_action :validate_date, only: [:index, :calendar]
+    before_action :validate_user_id, only: [:calendar]
     before_action :validate_group_id, only: [:index, :calendar]
 
     def index
@@ -76,17 +76,17 @@ class Api::V1::AttendancesController < ApplicationController
 
     def validate_date
       return if params[:date].present?
-      render json: { error: "パラメーターが不足しています" }, status: :bad_request
+      render json: { error: "dateパラメーターが不足しています" }, status: :bad_request
     end
 
     def validate_user_id
       return if params[:user_id].present?
-      render json: { error: "パラメーターが不足しています" }, status: :bad_request
+      render json: { error: "user_idパラメーターが不足しています" }, status: :bad_request
     end
 
     def validate_group_id
       return if params[:group_id].present?
-      render json: { error: "パラメーターが不足しています" }, status: :bad_request
+      render json: { error: "group_idパラメーターが不足しています" }, status: :bad_request
     end
 
 end

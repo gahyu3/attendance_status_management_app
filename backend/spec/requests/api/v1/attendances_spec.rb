@@ -84,7 +84,7 @@ RSpec.describe "Api::V1::Attendances", type: :request do
 
   describe "POST /api/v1/attendances" do
     context "処理が成功" do
-      let(:valid_params) do
+      let(:params) do
         {
           attendance: {
             user_id: user.id,
@@ -99,7 +99,7 @@ RSpec.describe "Api::V1::Attendances", type: :request do
       it "出席状況を作成" do
 
         expect {
-          post "/api/v1/attendances", params: valid_params, headers: auth_headers
+          post "/api/v1/attendances", params: params, headers: auth_headers
         }.to change { Attendance.count }.by(1)
 
         expect(response).to have_http_status(:created)
@@ -142,13 +142,13 @@ RSpec.describe "Api::V1::Attendances", type: :request do
     context "処理が成功" do
       it "変更後のレスポンスが変える" do
         attendance = create(:attendance,
-                      date: Date.yesterday,
-                      schedule: 0,
-                      attendances_status: 0,
-                      remarks: "特記事項なし",
-                      user: user,
-                      group: group
-                    )
+                              date: Date.yesterday,
+                              schedule: 0,
+                              attendances_status: 0,
+                              remarks: "特記事項なし",
+                              user: user,
+                              group: group
+                            )
         put "/api/v1/attendances/#{attendance.id}", headers: auth_headers, params: { attendance: {attendances_status: "away"} }
         expect(response).to have_http_status(:ok)
         json = JSON.parse(response.body)

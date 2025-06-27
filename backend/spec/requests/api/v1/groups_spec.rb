@@ -78,7 +78,7 @@ RSpec.describe "Api::V1::Groups", type: :request do
       context "処理が失敗" do
         it "エラーレスポンスが返る" do
           group = create(:group, name: "テスト1")
-          put "/api/v1/groups/#{group.id}", headers: auth_headers, params: { group: { name: "ああああああああああああああああああああ（20文字以上）" }}
+          put "/api/v1/groups/#{group.id}", headers: auth_headers, params: { group: { name: "ああああああああああああああああああああ（10文字以上）" }}
           expect(response).to have_http_status(:unprocessable_entity)
         end
       end

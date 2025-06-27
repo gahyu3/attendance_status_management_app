@@ -5,7 +5,7 @@ class Group < ApplicationRecord
   has_many :group_memberships
   has_many :users, through: :group_memberships
 
-  validates :name, length: { maximum: 30 }
+  validates :name, presence: true ,length: { maximum: 10 }
 
   def attend_user(user, date)
     attendances.find_or_create_by(user: user, date: date)

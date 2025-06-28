@@ -10,7 +10,7 @@
       </template>
       <v-date-picker v-model="selectedDate" color="primary"></v-date-picker>
     </v-menu>
-    <div>
+    <div class="d-flex justify-center pb-1">
       <v-btn rounded="0" size="small" class="rounded-s-xl" @click="dayBefore">-</v-btn>
       <v-btn rounded="0" size="small" class="px-8" @click="GetToday">今日</v-btn>
       <v-btn rounded="0" size="small" class="rounded-e-xl" @click="nextDay">+</v-btn>

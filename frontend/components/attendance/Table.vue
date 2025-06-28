@@ -21,7 +21,6 @@
       <AttendanceBtnDestroy :item="item" v-if="isUserCurrentUser(item.user_id)" />
     </template>
   </v-data-table>
-  <AttendanceBtnCreate />
 </template>
 
 <script setup lang="ts">

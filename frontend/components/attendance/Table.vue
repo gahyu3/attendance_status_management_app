@@ -21,7 +21,6 @@
       <AttendanceBtnDestroy :item="item" v-if="isUserCurrentUser(item.user_id)" />
     </template>
   </v-data-table>
-  <AttendanceBtnCreate />
 </template>
 
 <script setup lang="ts">
@@ -35,8 +34,8 @@ const headers = [
   { title: "備考", value: "remarks" },
   { title: "予定", value: "schedule" },
   { title: "出席状況", value: "attendances_status" },
+  { title: "月表示", value: "calendar"},
   { title: "", value: "destroy" },
-  { title: "月表示", value: "calendar"}
 ];
 
 function isUserCurrentUser(userId: number): boolean {

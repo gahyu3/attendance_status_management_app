@@ -7,7 +7,11 @@
             class="pa-10">
       <v-form v-if="editUser.user_name" @submit.prevent="updateUser(editUser.user_name)">
         <div class="d-flex justify-center">
-          <v-avatar v-if="image" :image="image" size="120"/>
+          <v-avatar v-if="user?.avatar_image?.url" :image="image" size="120"/>
+          <v-icon v-else
+            icon="mdi-account-circle"
+            size="120"
+            class="cursor-pointer"/>
         </div>
         <div class="d-flex justify-center pt-5 pb-5">
           <v-btn :disabled="user?.id !== currentUser?.id" text="アバター編集" @click="onInput"></v-btn>
@@ -17,12 +21,17 @@
                       label="ユーザーネーム"
                       placeholder="太郎"
                       type="text"
+                      variant="outlined"
                       :readonly="user?.id !== currentUser?.id"
                       ></v-text-field>
-        <v-btn :disabled="user?.id !== currentUser?.id" text="編集" type="submit"></v-btn>
+        <v-btn :disabled="user?.id !== currentUser?.id"
+          class="me-5"
+          text="編集"
+          type="submit">
+        </v-btn>
         <v-btn class="ms-auto"
-          text="閉じる"
-          @click="dialog = false">
+                text="閉じる"
+                @click="dialog = false">
         </v-btn>
       </v-form>
     </v-card>
@@ -45,9 +54,9 @@ const { currentUser } = useCurrentUser()
 const { attendances } = useAttendances()
 
 const file = ref<HTMLInputElement | null>(null)
-const image = ref<string | null>(null)
+const image = ref<string>("")
 const uploadFile = ref<File | null>(null)
-const originalImage = ref<string | null>(null)
+const originalImage = ref<string>("")
 const editUser = reactive({
   id: props.user?.id,
   user_name: props.user?.user_name

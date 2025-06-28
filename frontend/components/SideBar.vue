@@ -8,9 +8,10 @@
         :key="group.id"
         :value="group.name"
         :active="index === activeIndex"
-        @click="getAttendance(formatDate, group.id),
-                setActive(index),
-                setGroup(group)">
+        @click="getAttendance(formatDate, group.id);
+                setActive(index);
+                setGroup(group);
+                navigateDashboard();">
           <v-list-item-title>{{ group.name }}</v-list-item-title>
         </v-list-item>
       </v-list>
@@ -20,6 +21,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
+import { navigateTo } from "nuxt/app";
 import type { AttendancesResponse, GroupResponse, Group } from '~/types/index';
 
 const config = useRuntimeConfig()
@@ -50,6 +52,11 @@ onMounted(() => {
     }
   }
 )
+
+// dashboardページに移動
+function navigateDashboard() {
+  navigateTo("/dashboard")
+}
 
 // アクティブなインデックスをセット
 function setActive(index: number): void {

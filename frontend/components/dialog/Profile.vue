@@ -21,12 +21,17 @@
                       label="ユーザーネーム"
                       placeholder="太郎"
                       type="text"
+                      variant="outlined"
                       :readonly="user?.id !== currentUser?.id"
                       ></v-text-field>
-        <v-btn :disabled="user?.id !== currentUser?.id" text="編集" type="submit"></v-btn>
+        <v-btn :disabled="user?.id !== currentUser?.id"
+          class="me-5"
+          text="編集"
+          type="submit">
+        </v-btn>
         <v-btn class="ms-auto"
-          text="閉じる"
-          @click="dialog = false">
+                text="閉じる"
+                @click="dialog = false">
         </v-btn>
       </v-form>
     </v-card>

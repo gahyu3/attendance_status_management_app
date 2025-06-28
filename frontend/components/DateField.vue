@@ -2,16 +2,18 @@
   <div>
     <v-menu :close-on-content-click="false">
       <template v-slot:activator="{ props }">
-        <v-btn v-bind="props" class="cursor-pointer">
-          <client-only>{{ formatDate }}</client-only>
-        </v-btn>
+        <div class="d-flex justify-center pb-1">
+          <v-btn v-bind="props" class="cursor-pointer">
+            <client-only>{{ formatDate }}</client-only>
+          </v-btn>
+        </div>
       </template>
       <v-date-picker v-model="selectedDate" color="primary"></v-date-picker>
     </v-menu>
     <div>
-      <v-btn size="small" class="rounded-s-xl" @click="dayBefore">-</v-btn>
-      <v-btn size="small" class="px-8" @click="GetToday">今日</v-btn>
-      <v-btn size="small" class="rounded-e-xl" @click="nextDay">+</v-btn>
+      <v-btn rounded="0" size="small" class="rounded-s-xl" @click="dayBefore">-</v-btn>
+      <v-btn rounded="0" size="small" class="px-8" @click="GetToday">今日</v-btn>
+      <v-btn rounded="0" size="small" class="rounded-e-xl" @click="nextDay">+</v-btn>
     </div>
   </div>
 </template>

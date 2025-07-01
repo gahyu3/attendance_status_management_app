@@ -66,7 +66,8 @@ export type Schedule = "full_day_attendance" | "morning_attendance" | "afternoon
 
 // 月カレンダーイベント
 export interface EventItem {
-  title: Schedule;
+  title: string;
   start: Date;
   end: Date;
+  allDay: boolean;
 };

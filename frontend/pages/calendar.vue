@@ -2,6 +2,7 @@
   <NuxtLink to="/dashboard">
     <v-icon icon="mdi mdi-calendar-blank-outline"></v-icon>
   </NuxtLink>
+  {{ events }}
   <FullCalendar :options="calendarOptions" />
 </template>
 
@@ -23,9 +24,13 @@ definePageMeta({
 const config = useRuntimeConfig();
 const { getAuthHeaders } = useApiClient()
 
-const { selectedDate } = useDatePicker()
+const { selectedDate, formatDate } = useDatePicker()
 
 const events: Ref<EventItem[]> = ref([]);
+
+onMounted(() => {
+  getCalendar(formatDate.value,1,1)
+})
 
 async function getCalendar(date: string, userId: number, groupId: number): Promise<void> {
   try {
@@ -47,7 +52,7 @@ async function getCalendar(date: string, userId: number, groupId: number): Promi
 
 
 function changeAttendance(value: any) {
-  value.forEach((item: Attendance) => {
+  value.attendances.forEach((item: Attendance) => {
     const event = setAttendance(item)
     events.value?.push(event);
   });
@@ -61,9 +66,10 @@ const scheduleMap: Record<Schedule, string> = {
 
 function setAttendance(value: Attendance): EventItem {
   return {
-    title: value.schedule,
+    title: scheduleToJapanese(value.schedule),
     start: new Date(value.date),
     end: new Date(value.date),
+    allDay: true
   };
 }
 
@@ -82,18 +88,13 @@ const calendarOptions = {
   },
   allDaySlot: true, // ← これが「終日スロット」表示を有効にする
   editable: true,
-  events: [
-    {
-      title: '終日イベント',
-      start: '2025-06-30',
-      allDay: true,
-    },
-    {
-      title: '会議',
-      start: '2025-06-30',
-      end: '2025-06-30',
-    },
-  ],
+  events: events.value,
+  datesSet(info: any) {
+    // カレンダー表示が変更された時（前月/次月含む）に発火
+    console.log('表示範囲が変わりました')
+    console.log('開始日:', info.startStr)
+    console.log('終了日:', info.endStr)
+  }
 }
 
 </script>

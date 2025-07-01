@@ -3,20 +3,7 @@
     <v-icon icon="mdi mdi-calendar-blank-outline"></v-icon>
   </NuxtLink>
   <v-btn @click="changeAttendance(attendanceList)">aaa</v-btn>
-  {{ events }}
-  {{ current }}
-  <v-calendar ref="calendar"
-              type="month"
-              :v-model="current"
-              :events="events"
-              color="primary"
-              >
-    <template #event="{ event }">
-        <div class="px-2 py-1 rounded bg-green text-center">
-          {{ scheduleToJapanese(event.title as Schedule) }}
-        </div>
-    </template>
-  </v-calendar>
+  <FullCalendar :options="calendarOptions" />
 </template>
 
 
@@ -24,6 +11,10 @@
 import { onMounted, ref } from 'vue'
 import { useDate } from 'vuetify'
 import type { Attendance, EventItem, Schedule } from '~/types';
+import FullCalendar from '@fullcalendar/vue3'
+import dayGridPlugin from '@fullcalendar/daygrid'
+import timeGridPlugin from '@fullcalendar/timegrid'
+import interactionPlugin from '@fullcalendar/interaction'
 
 definePageMeta({
   middleware: [
@@ -33,8 +24,6 @@ definePageMeta({
 
 const { selectedDate } = useDatePicker()
 
-const calendar = ref()
-const current = ref('2025-09-02')
 const attendanceList = [{
   id: 10,
   date: "2025-06-13",
@@ -105,6 +94,30 @@ function setAttendance(value: Attendance): EventItem {
 // ステータスを日本語化
 function scheduleToJapanese(schedule: Schedule): string{
     return scheduleMap[schedule]
+}
+
+const calendarOptions = {
+  plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
+  initialView: 'dayGridMonth', // 週表示（終日含む）
+  headerToolbar: {
+    left: 'prev,next today',
+    center: 'title',
+    end: ''
+  },
+  allDaySlot: true, // ← これが「終日スロット」表示を有効にする
+  editable: true,
+  events: [
+    {
+      title: '終日イベント',
+      start: '2025-06-30',
+      allDay: true,
+    },
+    {
+      title: '会議',
+      start: '2025-06-30',
+      end: '2025-06-30',
+    },
+  ],
 }
 
 </script>

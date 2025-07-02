@@ -3,7 +3,11 @@
     <v-icon icon="mdi mdi-calendar-blank-outline"></v-icon>
   </NuxtLink>
   {{ events }}
-  <FullCalendar :options="calendarOptions" />
+  <v-btn>{{ displayedMonth }}</v-btn>
+  <v-btn @click="today">今月</v-btn>
+  <v-btn @click="prev">前</v-btn>
+  <v-btn @click="next">次</v-btn>
+  <FullCalendar ref="calendar" :options="calendarOptions" />
 </template>
 
 
@@ -15,6 +19,7 @@ import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
+import allLocales from '@fullcalendar/core/locales-all'
 
 definePageMeta({
   middleware: [
@@ -25,11 +30,13 @@ const config = useRuntimeConfig();
 const { getAuthHeaders } = useApiClient()
 
 const { selectedDate, formatDate } = useDatePicker()
+const calendar = ref()
+const displayedMonth = ref()
 
 const events: Ref<EventItem[]> = ref([]);
 
 onMounted(() => {
-  getCalendar(formatDate.value,1,1)
+  getCalendar(formatDate.value,10,1)
 })
 
 async function getCalendar(date: string, userId: number, groupId: number): Promise<void> {
@@ -50,6 +57,17 @@ async function getCalendar(date: string, userId: number, groupId: number): Promi
   }
 }
 
+function next() {
+  calendar.value.getApi().next()
+}
+
+function prev() {
+  calendar.value.getApi().prev()
+}
+
+function today() {
+  calendar.value.getApi().today()
+}
 
 function changeAttendance(value: any) {
   value.attendances.forEach((item: Attendance) => {
@@ -69,7 +87,8 @@ function setAttendance(value: Attendance): EventItem {
     title: scheduleToJapanese(value.schedule),
     start: new Date(value.date),
     end: new Date(value.date),
-    allDay: true
+    allDay: true,
+    color: btnColor(value.schedule)
   };
 }
 
@@ -78,20 +97,38 @@ function scheduleToJapanese(schedule: Schedule): string{
     return scheduleMap[schedule]
 }
 
+// ステータスに応じたボタンの色を返す
+function btnColor(scheduleStatus: Schedule): string{
+  return scheduleColorMap[scheduleStatus]
+}
+
+const scheduleColorMap: Record<Schedule, string> = {
+  full_day_attendance: "#4CAF50",
+  morning_attendance: "yellow",
+  afternoon_attendance: "grey"
+}
+
 const calendarOptions = {
   plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
   initialView: 'dayGridMonth', // 週表示（終日含む）
   headerToolbar: {
-    left: 'prev,next today',
-    center: 'title',
+    left: '',
+    center: '',
     end: ''
   },
+  locales: allLocales,
+  locale: 'ja', // ← ここで日本語を指定
   allDaySlot: true, // ← これが「終日スロット」表示を有効にする
   editable: true,
+  dayCellContent: function (arg: any) {
+    // 数字だけを返す（日付）
+    return { html: String(arg.date.getDate()) }
+  },
   events: events.value,
   datesSet(info: any) {
-    // カレンダー表示が変更された時（前月/次月含む）に発火
+    displayedMonth.value = info.view.title
     console.log('表示範囲が変わりました')
+    console.log('表示月', info.view.title)
     console.log('開始日:', info.startStr)
     console.log('終了日:', info.endStr)
   }

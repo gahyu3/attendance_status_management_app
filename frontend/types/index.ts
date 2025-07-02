@@ -70,4 +70,5 @@ export interface EventItem {
   start: Date;
   end: Date;
   allDay: boolean;
+  color: string
 };

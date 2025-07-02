@@ -2,7 +2,6 @@
   <NuxtLink to="/dashboard">
     <v-icon icon="mdi mdi-calendar-blank-outline"></v-icon>
   </NuxtLink>
-  {{ events }}
   <v-btn>{{ displayedMonth }}</v-btn>
   <v-btn @click="today">今月</v-btn>
   <v-btn @click="prev">前</v-btn>
@@ -26,6 +25,7 @@ definePageMeta({
     "auth",
   ],
 });
+
 const config = useRuntimeConfig();
 const { getAuthHeaders } = useApiClient()
 const route = useRoute()
@@ -132,7 +132,7 @@ const calendarOptions = {
   datesSet(info: any) {
     displayedMonth.value = info.view.title
     currentStart.value = info.startStr
-    currentEnd.value = info.endDate
+    currentEnd.value = info.endStr
     console.log('表示範囲が変わりました')
     console.log('表示月', info.view.title)
     console.log('開始日:', info.startStr)

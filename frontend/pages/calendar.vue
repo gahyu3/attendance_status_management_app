@@ -28,23 +28,24 @@ definePageMeta({
 });
 const config = useRuntimeConfig();
 const { getAuthHeaders } = useApiClient()
-
-const { selectedDate, formatDate } = useDatePicker()
+const route = useRoute()
 const calendar = ref()
 const displayedMonth = ref()
-
 const events: Ref<EventItem[]> = ref([]);
 
 onMounted(() => {
-  getCalendar(formatDate.value,10,1)
+  const userId = Number(route.query.user_id)
+  const groupId = Number(route.query.group_id)
+  getCalendar( currentStart.value, currentEnd.value, userId, groupId )
 })
 
-async function getCalendar(date: string, userId: number, groupId: number): Promise<void> {
+async function getCalendar(startDate: string, endDate: string, userId: number, groupId: number): Promise<void> {
   try {
     const response: AttendancesResponse = await $fetch(`${config.public.apiBase}/api/v1/attendances/calendar`, {
       headers: getAuthHeaders(),
       query: {
-        date: date,
+        start_date: startDate,
+        end_date: endDate,
         user_id: userId,
         group_id: groupId
       }
@@ -108,6 +109,9 @@ const scheduleColorMap: Record<Schedule, string> = {
   afternoon_attendance: "grey"
 }
 
+const currentStart = ref('')
+const currentEnd = ref('')
+
 const calendarOptions = {
   plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
   initialView: 'dayGridMonth', // 週表示（終日含む）
@@ -127,6 +131,8 @@ const calendarOptions = {
   events: events.value,
   datesSet(info: any) {
     displayedMonth.value = info.view.title
+    currentStart.value = info.startStr
+    currentEnd.value = info.endDate
     console.log('表示範囲が変わりました')
     console.log('表示月', info.view.title)
     console.log('開始日:', info.startStr)

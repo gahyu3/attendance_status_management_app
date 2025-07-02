@@ -13,7 +13,7 @@
       <AttendanceBtnStatus :item="item" />
     </template>
     <template #item.calendar="{ item }">
-      <NuxtLink :to="{ path: '/calendar', query: { user_id: item.user.id, month: selectedDate.getMonth() } }">
+      <NuxtLink :to="{ path: '/calendar', query: { user_id: item.user.id, group_id: selectedGroup?.id } }">
         <v-icon icon="mdi mdi-calendar-blank-outline"></v-icon>
       </NuxtLink>
     </template>
@@ -27,6 +27,7 @@
 const { currentUser } = useCurrentUser()
 const { attendances } = useAttendances()
 const { selectedDate } = useDatePicker()
+const { selectedGroup } = useSelectedGroup()
 
 const headers = [
   { title: "", value: "avatar"},
@@ -42,5 +43,9 @@ function isUserCurrentUser(userId: number): boolean {
   return userId === currentUser.value?.id
 };
 
+
+function useGroups() {
+  throw new Error('Function not implemented.');
+}
 </script>
 

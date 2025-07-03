@@ -1,30 +1,8 @@
 <template>
-  <v-row>
-    <v-col cols="5">
-      <div>
-        <div class="ms-9 mb-1">
-          <v-btn>{{ displayedMonth }}</v-btn>
-        </div>
-        <div class="pb-1">
-          <v-btn rounded="0" size="small"  class="rounded-s-xl" @click="prev">前</v-btn>
-          <v-btn rounded="0" size="small" class="px-8" @click="today">今月</v-btn>
-          <v-btn rounded="0" size="small" class="rounded-e-xl" @click="next">次</v-btn>
-        </div>
-      </div>
-    </v-col>
-    <v-col align-self="center">
-      <v-row>
-        <CalendarHeader />
-      </v-row>
-    </v-col>
-    <v-col align-self="center">
-      <v-row justify="end" class="pe-10">
-        <NuxtLink to="/dashboard">
-          <v-btn>日時切替</v-btn>
-        </NuxtLink>
-      </v-row>
-    </v-col>
-  </v-row>
+  <CalendarHeader   :on-next="next"
+                    :on-prev="prev"
+                    :on-today="today"
+                    :displayed-month="displayedMonth" />
   <FullCalendar ref="calendar" :options="calendarOptions" />
 </template>
 
@@ -79,20 +57,8 @@ async function getCalendar(startDate: string, endDate: string, userId: number, g
   }
 }
 
-function next() {
-  calendar.value.getApi().next()
-}
-
-function prev() {
-  calendar.value.getApi().prev()
-}
-
-function today() {
-  calendar.value.getApi().today()
-}
-
 function changeAttendance(value: any): EventItem[] {
-  return value.attendances.map((item: Attendance) => setAttendance(item))
+  return value.attendances.map((item: Attendance) => setEvent(item))
 }
 
 const scheduleMap: Record<Schedule, string> = {
@@ -101,7 +67,7 @@ const scheduleMap: Record<Schedule, string> = {
   afternoon_attendance: "午後参加"
 }
 
-function setAttendance(value: Attendance): EventItem {
+function setEvent(value: Attendance): EventItem {
   return {
     title: scheduleToJapanese(value.schedule),
     start: new Date(value.date),
@@ -135,6 +101,19 @@ const scheduleColorMap: Record<Schedule, string> = {
   morning_attendance: "yellow",
   afternoon_attendance: "grey"
 }
+
+function next() {
+  calendar.value.getApi().next()
+}
+
+function prev() {
+  calendar.value.getApi().prev()
+}
+
+function today() {
+  calendar.value.getApi().today()
+}
+
 
 const calendarOptions = {
   plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],

@@ -1,11 +1,25 @@
 <template>
-  <NuxtLink to="/dashboard">
-    <v-icon icon="mdi mdi-calendar-blank-outline"></v-icon>
-  </NuxtLink>
-  <v-btn>{{ displayedMonth }}</v-btn>
-  <v-btn @click="today">今月</v-btn>
-  <v-btn @click="prev">前</v-btn>
-  <v-btn @click="next">次</v-btn>
+  <v-row>
+    <v-col>
+      <div>
+        <div class="ms-8 mb-1">
+          <v-btn>{{ displayedMonth }}</v-btn>
+        </div>
+        <div class="pb-1">
+          <v-btn rounded="0" size="small"  class="rounded-s-xl" @click="prev">前</v-btn>
+          <v-btn rounded="0" size="small" class="px-8" @click="today">今月</v-btn>
+          <v-btn rounded="0" size="small" class="rounded-e-xl" @click="next">次</v-btn>
+        </div>
+      </div>
+    </v-col>
+    <v-col align-self="center">
+      <v-row justify="end" class="pe-10">
+        <NuxtLink to="/dashboard">
+          <v-btn>日時切替</v-btn>
+        </NuxtLink>
+      </v-row>
+    </v-col>
+  </v-row>
   <FullCalendar ref="calendar" :options="calendarOptions" />
 </template>
 
@@ -127,6 +141,14 @@ const calendarOptions = {
   dayCellContent: function (arg: any) {
     // 数字だけを返す（日付）
     return { html: String(arg.date.getDate()) }
+  },
+  dayCellDidMount(info: any) {
+  if (info.isToday) {
+    info.el.style.backgroundColor = '#ffebee' // 薄い赤系
+    console.log('今日の日:', info.date)
+  }},
+  dateClick(info: any) {
+    console.log('クリックされたイベント:', info)
   },
   events: events.value,
   datesSet(info: any) {

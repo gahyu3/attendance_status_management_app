@@ -26,7 +26,6 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { useDate } from 'vuetify'
 import type { Attendance, AttendancesResponse, EventItem, Schedule } from '~/types';
 import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
@@ -45,12 +44,14 @@ const { getAuthHeaders } = useApiClient()
 const route = useRoute()
 const calendar = ref()
 const displayedMonth = ref()
-const events: Ref<EventItem[]> = ref([]);
+const events = ref<EventItem[]>([])
+const userId = Number(route.query.user_id)
+const groupId = Number(route.query.group_id)
+const currentStart = ref('')
+const currentEnd = ref('')
 
 onMounted(() => {
-  const userId = Number(route.query.user_id)
-  const groupId = Number(route.query.group_id)
-  getCalendar( currentStart.value, currentEnd.value, userId, groupId )
+  getCalendar(currentStart.value, currentEnd.value, userId, groupId)
 })
 
 async function getCalendar(startDate: string, endDate: string, userId: number, groupId: number): Promise<void> {
@@ -65,8 +66,9 @@ async function getCalendar(startDate: string, endDate: string, userId: number, g
       }
     })
 
-    changeAttendance(response)
-
+    const eventArray =  changeAttendance(response)
+    events.value = eventArray
+    reloadCalendarEvents()
   } catch (error) {
     console.error('APIエラー', error)
   }
@@ -84,11 +86,8 @@ function today() {
   calendar.value.getApi().today()
 }
 
-function changeAttendance(value: any) {
-  value.attendances.forEach((item: Attendance) => {
-    const event = setAttendance(item)
-    events.value?.push(event);
-  });
+function changeAttendance(value: any): EventItem[] {
+  return value.attendances.map((item: Attendance) => setAttendance(item))
 }
 
 const scheduleMap: Record<Schedule, string> = {
@@ -117,14 +116,20 @@ function btnColor(scheduleStatus: Schedule): string{
   return scheduleColorMap[scheduleStatus]
 }
 
+// カレンダーのイベントを更新
+function reloadCalendarEvents() {
+  const api = calendar.value?.getApi()
+  if (api) {
+    api.removeAllEvents()
+    api.addEventSource(events.value)
+  }
+}
+
 const scheduleColorMap: Record<Schedule, string> = {
   full_day_attendance: "#4CAF50",
   morning_attendance: "yellow",
   afternoon_attendance: "grey"
 }
-
-const currentStart = ref('')
-const currentEnd = ref('')
 
 const calendarOptions = {
   plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
@@ -135,31 +140,31 @@ const calendarOptions = {
     end: ''
   },
   locales: allLocales,
-  locale: 'ja', // ← ここで日本語を指定
-  allDaySlot: true, // ← これが「終日スロット」表示を有効にする
+  locale: 'ja',
+  allDaySlot: true,
   editable: true,
   dayCellContent: function (arg: any) {
-    // 数字だけを返す（日付）
     return { html: String(arg.date.getDate()) }
   },
   dayCellDidMount(info: any) {
   if (info.isToday) {
-    info.el.style.backgroundColor = '#ffebee' // 薄い赤系
+    info.el.style.backgroundColor = '#ffebee'
     console.log('今日の日:', info.date)
   }},
   dateClick(info: any) {
     console.log('クリックされたイベント:', info)
   },
-  events: events.value,
   datesSet(info: any) {
     displayedMonth.value = info.view.title
     currentStart.value = info.startStr
     currentEnd.value = info.endStr
+    getCalendar(currentStart.value, currentEnd.value, userId, groupId)
     console.log('表示範囲が変わりました')
     console.log('表示月', info.view.title)
     console.log('開始日:', info.startStr)
     console.log('終了日:', info.endStr)
-  }
+  },
+  events: events.value,
 }
 
 </script>

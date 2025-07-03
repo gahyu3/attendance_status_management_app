@@ -3,6 +3,10 @@ export interface LoginResponse {
   data: User
 }
 
+export interface UserResponse {
+    user: User
+}
+
 export interface User {
   id: number
   user_name: string

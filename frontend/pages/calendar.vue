@@ -1,8 +1,8 @@
 <template>
   <v-row>
-    <v-col>
+    <v-col cols="5">
       <div>
-        <div class="ms-8 mb-1">
+        <div class="ms-9 mb-1">
           <v-btn>{{ displayedMonth }}</v-btn>
         </div>
         <div class="pb-1">
@@ -11,6 +11,11 @@
           <v-btn rounded="0" size="small" class="rounded-e-xl" @click="next">次</v-btn>
         </div>
       </div>
+    </v-col>
+    <v-col align-self="center">
+      <v-row>
+        <CalendarHeader />
+      </v-row>
     </v-col>
     <v-col align-self="center">
       <v-row justify="end" class="pe-10">

@@ -10,7 +10,7 @@
                                               editItem.remarks)">
         <div class="py-5">
           <v-chip size="x-large" color="primary" variant="tonal">
-            {{ formatDate }}
+            {{ item?.date }}
           </v-chip>
         </div>
         <v-select
@@ -39,10 +39,12 @@
 </template>
 
 <script setup lang="ts">
-import type { Attendance, AttendanceResponse } from '~/types'
+import type { Attendance, AttendanceResponse, EventItem, Schedule } from '~/types'
 
 const props = defineProps<{
                 item: Attendance | null
+                event?: EventItem[] | null
+                currentEvent?: any
               }>()
 
 const config = useRuntimeConfig()
@@ -57,6 +59,28 @@ const scheduleList = [
   { title: "午前参加", value: "morning_attendance" },
   { title: "午後参加", value: "afternoon_attendance" },
 ];
+
+const scheduleMap: Record<Schedule, string> = {
+  full_day_attendance: "終日参加",
+  morning_attendance: "午前参加",
+  afternoon_attendance: "午後参加"
+}
+
+// ステータスを日本語化
+function scheduleToJapanese(schedule: Schedule): string{
+    return scheduleMap[schedule]
+}
+
+// ステータスに応じたボタンの色を返す
+function btnColor(scheduleStatus: Schedule): string{
+  return scheduleColorMap[scheduleStatus]
+}
+
+const scheduleColorMap: Record<Schedule, string> = {
+  full_day_attendance: "#4CAF50",
+  morning_attendance: "yellow",
+  afternoon_attendance: "grey"
+}
 
 const editItem = reactive({
   id: props.item?.id,
@@ -107,6 +131,13 @@ async function updateSchedule(attendanceId?: number,
     console.log(response)
     const updated = response.attendance;
     const attendanceList = attendances.value?.attendances;
+    if (props.currentEvent) {
+      props.currentEvent.setProp('title', scheduleToJapanese(updated.schedule))
+      props.currentEvent.setProp('color', btnColor(updated.schedule) )
+    }
+
+    dialog.value = false;
+
     if (!attendanceList) return;
 
     const target = attendanceList.find(att => att.id === attendanceId);
@@ -115,7 +146,7 @@ async function updateSchedule(attendanceId?: number,
     target.schedule = updated.schedule;
     target.remarks = updated.remarks;
 
-    dialog.value = false;
+
   } catch (error) {
     console.error('APIエラー:', error)
   }

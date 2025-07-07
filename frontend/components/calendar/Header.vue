@@ -38,7 +38,7 @@ defineProps<{
   onNext: () => void,
   onPrev: () => void,
   onToday: () => void,
-  displayedMonth: string
+  displayedMonth?: string
 }>()
 
 const config = useRuntimeConfig();

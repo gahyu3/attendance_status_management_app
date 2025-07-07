@@ -4,6 +4,7 @@
                     :on-today="today"
                     :displayed-month="displayedMonth" />
   <FullCalendar ref="calendar" :options="calendarOptions" />
+  <DialogSchedule v-if="item" v-model="dialog" :item="item" :current-event="currentEvent"/>
 </template>
 
 
@@ -32,6 +33,11 @@ const userId = Number(route.query.user_id)
 const groupId = Number(route.query.group_id)
 const currentStart = ref('')
 const currentEnd = ref('')
+const dialog = ref(false)
+const item = ref<Attendance | null>()
+const attendance = ref()
+const currentEvent = ref()
+
 
 onMounted(() => {
   getCalendar(currentStart.value, currentEnd.value, userId, groupId)
@@ -49,6 +55,7 @@ async function getCalendar(startDate: string, endDate: string, userId: number, g
       }
     })
 
+    attendance.value = response.attendances
     const eventArray =  changeAttendance(response)
     events.value = eventArray
     reloadCalendarEvents()
@@ -73,7 +80,10 @@ function setEvent(value: Attendance): EventItem {
     start: new Date(value.date),
     end: new Date(value.date),
     allDay: true,
-    color: btnColor(value.schedule)
+    color: btnColor(value.schedule),
+    extendedProps: {
+      id: value.id
+    }
   };
 }
 
@@ -136,7 +146,13 @@ const calendarOptions = {
     console.log('今日の日:', info.date)
   }},
   dateClick(info: any) {
-    console.log('クリックされたイベント:', info)
+    console.log('日付クリック:', info)
+  },
+  eventClick(info: any) {
+    dialog.value = true
+    currentEvent.value = info.event
+    findAttendance(info.event)
+    console.log("イベントクリック", info.event.extendedProps.id)
   },
   datesSet(info: any) {
     displayedMonth.value = info.view.title
@@ -149,6 +165,11 @@ const calendarOptions = {
     console.log('終了日:', info.endStr)
   },
   events: events.value,
+}
+
+function findAttendance(event: EventItem) {
+  const eventAttendance = attendance.value?.find((a: { id: number; }) => a.id === event.extendedProps.id)
+  item.value = eventAttendance
 }
 
 </script>

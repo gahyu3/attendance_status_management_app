@@ -11,6 +11,7 @@
         <div class="py-5">
           <v-chip size="x-large" color="primary" variant="tonal">
             {{ item?.date }}
+            {{ date }}
           </v-chip>
         </div>
         <v-select
@@ -42,9 +43,9 @@
 import type { Attendance, AttendanceResponse, EventItem, Schedule } from '~/types'
 
 const props = defineProps<{
-                item: Attendance | null
-                event?: EventItem[] | null
+                item: Attendance | null | undefined
                 currentEvent?: any
+                date?: Date
               }>()
 
 const config = useRuntimeConfig()
@@ -133,7 +134,10 @@ async function updateSchedule(attendanceId?: number,
     const attendanceList = attendances.value?.attendances;
     if (props.currentEvent) {
       props.currentEvent.setProp('title', scheduleToJapanese(updated.schedule))
-      props.currentEvent.setProp('color', btnColor(updated.schedule) )
+      props.currentEvent.setProp('color', btnColor(updated.schedule))
+      if (props.item) {
+        props.item.schedule = updated.schedule
+      }
     }
 
     dialog.value = false;
@@ -145,7 +149,6 @@ async function updateSchedule(attendanceId?: number,
 
     target.schedule = updated.schedule;
     target.remarks = updated.remarks;
-
 
   } catch (error) {
     console.error('APIエラー:', error)

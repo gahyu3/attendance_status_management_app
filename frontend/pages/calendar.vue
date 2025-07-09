@@ -4,9 +4,11 @@
                     :on-today="today"
                     :displayed-month="displayedMonth" />
   <FullCalendar ref="calendar" :options="calendarOptions" />
-  <DialogSchedule v-if="item" v-model="dialog" :item="item" :current-event="currentEvent"/>
+  <DialogSchedule v-model="dialog"  :item="item"
+                                    :current-event="currentEvent"
+                                    :date="date"/>
+                                                {{ item }}
 </template>
-
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
@@ -37,6 +39,7 @@ const dialog = ref(false)
 const item = ref<Attendance | null>()
 const attendance = ref()
 const currentEvent = ref()
+const date = ref()
 
 
 onMounted(() => {
@@ -124,7 +127,6 @@ function today() {
   calendar.value.getApi().today()
 }
 
-
 const calendarOptions = {
   plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
   initialView: 'dayGridMonth', // 週表示（終日含む）
@@ -146,6 +148,9 @@ const calendarOptions = {
     console.log('今日の日:', info.date)
   }},
   dateClick(info: any) {
+    dialog.value = true
+    item.value = null
+    date.value = info.dateStr
     console.log('日付クリック:', info)
   },
   eventClick(info: any) {
@@ -170,6 +175,12 @@ const calendarOptions = {
 function findAttendance(event: EventItem) {
   const eventAttendance = attendance.value?.find((a: { id: number; }) => a.id === event.extendedProps.id)
   item.value = eventAttendance
+}
+
+function checkEvents(date: Date) {
+  if (!events.value.find(e => e.start === date)) {
+    item.value = null
+  }
 }
 
 </script>

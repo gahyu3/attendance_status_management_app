@@ -45,7 +45,8 @@ import type { Attendance, AttendanceResponse, EventItem, Schedule } from '~/type
 const props = defineProps<{
                 item: Attendance | null | undefined
                 currentEvent?: any
-                date?: Date
+                date?: string
+                type?: string
               }>()
 
 const config = useRuntimeConfig()

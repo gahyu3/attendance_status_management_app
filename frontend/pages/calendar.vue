@@ -6,8 +6,8 @@
   <FullCalendar ref="calendar" :options="calendarOptions" />
   <DialogSchedule v-model="dialog"  :item="item"
                                     :current-event="currentEvent"
-                                    :date="date"/>
-                                                {{ item }}
+                                    :date="date"
+                                    :type="type"/>
 </template>
 
 <script setup lang="ts">
@@ -40,6 +40,7 @@ const item = ref<Attendance | null>()
 const attendance = ref()
 const currentEvent = ref()
 const date = ref()
+const type = ref("edit")
 
 
 onMounted(() => {
@@ -148,15 +149,23 @@ const calendarOptions = {
     console.log('今日の日:', info.date)
   }},
   dateClick(info: any) {
+    if (checkEvents(info.date)) {
+      type.value = "edit"
+      item.value = findByDateAttendance(info.date)
+    } else {
+      item.value = null
+      date.value = info.dateStr
+      type.value = "new"
+    }
     dialog.value = true
-    item.value = null
-    date.value = info.dateStr
-    console.log('日付クリック:', info)
+    console.log('日付クリック:', info.date)
   },
   eventClick(info: any) {
     dialog.value = true
+    date.value = null
     currentEvent.value = info.event
-    findAttendance(info.event)
+    type.value = "edit"
+    item.value = findAttendance(info.event)
     console.log("イベントクリック", info.event.extendedProps.id)
   },
   datesSet(info: any) {
@@ -172,15 +181,34 @@ const calendarOptions = {
   events: events.value,
 }
 
-function findAttendance(event: EventItem) {
+function findAttendance(event: EventItem): Attendance {
   const eventAttendance = attendance.value?.find((a: { id: number; }) => a.id === event.extendedProps.id)
-  item.value = eventAttendance
+  return eventAttendance
 }
 
-function checkEvents(date: Date) {
-  if (!events.value.find(e => e.start === date)) {
-    item.value = null
+function findByDateAttendance(date: Date) {
+  const event = events.value.find(e => {
+    const d1 = new Date(e.start)
+    return (
+      d1.getFullYear() === date.getFullYear() &&
+      d1.getMonth() === date.getMonth() &&
+      d1.getDate() === date.getDate()
+    )
+  })
+
+  if (event) {
+    return findAttendance(event)
   }
 }
 
+function checkEvents(date: Date): boolean {
+  return events.value.some(e => {
+    const d1 = new Date(e.start)
+    return (
+      d1.getFullYear() === date.getFullYear() &&
+      d1.getMonth() === date.getMonth() &&
+      d1.getDate() === date.getDate()
+    )
+  })
+}
 </script>

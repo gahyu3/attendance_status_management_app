@@ -5,12 +5,12 @@
             style="max-width: 90vw;"
             title="予定編集"
             class="pa-10">
-      <v-form @submit.prevent="updateSchedule(editItem.id,
-                                              editItem.schedule,
-                                              editItem.remarks)">
+      <v-form @submit.prevent="onSubmit()">
         <div class="py-5">
           <v-chip size="x-large" color="primary" variant="tonal">
-            {{ item?.date }}
+            <div v-if="type===`edit`">
+              {{ item?.date }}
+            </div v-else>
             {{ date }}
           </v-chip>
         </div>
@@ -44,12 +44,17 @@ import type { Attendance, AttendanceResponse, EventItem, Schedule } from '~/type
 
 const props = defineProps<{
                 item: Attendance | null | undefined
+                attendance?: Attendance[]
                 currentEvent?: any
+                events?: EventItem[]
+                setEvent?: (value: Attendance) => EventItem
                 date?: string
-                type?: string
+                type: string
+                calendar?: any
               }>()
 
 const config = useRuntimeConfig()
+const route = useRoute()
 const dialog = defineModel<boolean>()
 const { selectedDate, formatDate } = useDatePicker()
 const { getAuthHeaders } = useApiClient()
@@ -81,7 +86,7 @@ function btnColor(scheduleStatus: Schedule): string{
 const scheduleColorMap: Record<Schedule, string> = {
   full_day_attendance: "#4CAF50",
   morning_attendance: "yellow",
-  afternoon_attendance: "grey"
+  afternoon_attendance: "orange"
 }
 
 const editItem = reactive({
@@ -153,6 +158,68 @@ async function updateSchedule(attendanceId?: number,
 
   } catch (error) {
     console.error('APIエラー:', error)
+  }
+}
+
+// POSTリクエストを送信
+async function createAttendance(date: string,
+                                schedule: string,
+                                userid: number,
+                                groupId: number): Promise<void> {
+
+  const attendanceParams = {
+    attendance: {
+      date: date,
+      schedule: schedule,
+      remarks: "",
+      user_id: userid,
+      group_id: groupId,
+    }
+  };
+
+  try {
+    const response: AttendanceResponse = await $fetch(`${config.public.apiBase}/api/v1/attendances`, {
+      method: "POST",
+      headers: getAuthHeaders(),
+      body: attendanceParams
+    })
+
+    const a =  response.attendance
+    if (props.setEvent) {
+      const event = props.setEvent(a)
+      addEvent(event)
+      props.events?.push(event)
+      props.attendance?.push(a)
+    }
+
+    dialog.value = false
+  } catch (error) {
+    console.error('APIエラー:', error)
+  }
+};
+
+// イベントを追加
+function addEvent(event: EventItem) {
+  const api = props.calendar?.getApi()
+  if (api) {
+    api.addEvent(event)
+  } else {
+    console.log("calendarAPIがありません")
+  }
+}
+
+// typeがedit か new 判別
+function onSubmit() {
+  if (props.type === 'edit') {
+    updateSchedule(editItem.id, editItem.schedule, editItem.remarks)
+  } else if (props.type === 'new') {
+    const userId = Number(route.query.user_id)
+    const groupId = Number(route.query.group_id)
+    if (props.date && editItem.schedule) {
+      createAttendance(props.date, editItem.schedule, userId, groupId)
+    } else {
+      console.log("dateがありません")
+    }
   }
 }
 

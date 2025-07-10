@@ -5,9 +5,13 @@
                     :displayed-month="displayedMonth" />
   <FullCalendar ref="calendar" :options="calendarOptions" />
   <DialogSchedule v-model="dialog"  :item="item"
+                                    :attendance="attendance"
                                     :current-event="currentEvent"
+                                    :events="events"
+                                    :set-event="setEvent"
                                     :date="date"
-                                    :type="type"/>
+                                    :type="type"
+                                    :calendar="calendar"/>
 </template>
 
 <script setup lang="ts">
@@ -101,6 +105,12 @@ function btnColor(scheduleStatus: Schedule): string{
   return scheduleColorMap[scheduleStatus]
 }
 
+const scheduleColorMap: Record<Schedule, string> = {
+  full_day_attendance: "#4CAF50",
+  morning_attendance: "#FDD835",
+  afternoon_attendance: "orange"
+}
+
 // カレンダーのイベントを更新
 function reloadCalendarEvents() {
   const api = calendar.value?.getApi()
@@ -108,12 +118,6 @@ function reloadCalendarEvents() {
     api.removeAllEvents()
     api.addEventSource(events.value)
   }
-}
-
-const scheduleColorMap: Record<Schedule, string> = {
-  full_day_attendance: "#4CAF50",
-  morning_attendance: "yellow",
-  afternoon_attendance: "grey"
 }
 
 function next() {
@@ -173,17 +177,15 @@ const calendarOptions = {
     currentStart.value = info.startStr
     currentEnd.value = info.endStr
     getCalendar(currentStart.value, currentEnd.value, userId, groupId)
-    console.log('表示範囲が変わりました')
-    console.log('表示月', info.view.title)
-    console.log('開始日:', info.startStr)
-    console.log('終了日:', info.endStr)
   },
   events: events.value,
 }
 
-function findAttendance(event: EventItem): Attendance {
+function findAttendance(event: EventItem) {
   const eventAttendance = attendance.value?.find((a: { id: number; }) => a.id === event.extendedProps.id)
-  return eventAttendance
+  if (eventAttendance) {
+    return eventAttendance
+  }
 }
 
 function findByDateAttendance(date: Date) {

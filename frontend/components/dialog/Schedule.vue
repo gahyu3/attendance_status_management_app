@@ -19,6 +19,7 @@
           label="参加予定"
           :items="scheduleList"
           variant="outlined"
+          :readonly="isNotCurrentUser()"
         ></v-select>
         <v-text-field v-model="editItem.remarks"
                       label="備考"
@@ -26,8 +27,9 @@
                       variant="outlined"
                       maxlength="10"
                       :counter="10"
+                      :readonly="isNotCurrentUser()"
                       ></v-text-field>
-        <v-btn type="submit" class="me-3">
+        <v-btn type="submit" class="me-3" :disabled="isNotCurrentUser()">
           {{ type === "new" ? '新規作成' : "編集" }}
         </v-btn>
         <v-btn class="ms-auto"
@@ -57,9 +59,10 @@ const config = useRuntimeConfig()
 const route = useRoute()
 const dialog = defineModel<boolean>()
 const { selectedDate, formatDate } = useDatePicker()
+const { currentUser } = useCurrentUser()
 const { getAuthHeaders } = useApiClient()
-
 const { attendances } = useAttendances()
+const userId = Number(route.query.user_id)
 
 const scheduleList = [
   { title: "終日参加", value: "full_day_attendance"},
@@ -221,6 +224,11 @@ function onSubmit() {
       console.log("dateがありません")
     }
   }
+}
+
+// ログインしているユーザーではないときtrue
+function isNotCurrentUser(): boolean {
+  return userId !== currentUser.value?.id
 }
 
 </script>

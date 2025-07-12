@@ -4,7 +4,7 @@
         :color="btnColor(item?.schedule)"
         @click="dialog = true">
   </v-btn>
-  <DialogSchedule v-model="dialog" :item="item" />
+  <DialogSchedule v-model="dialog" :item="item" :type="type"/>
 </template>
 
 <script setup lang="ts">
@@ -14,6 +14,7 @@ import type { Attendance, Schedule } from '~/types';
 defineProps<{ item: Attendance | null }>()
 
 const dialog = ref(false)
+const type = ref("edit")
 
 const scheduleMap: Record<Schedule, string> = {
   full_day_attendance: "終日参加",
@@ -24,7 +25,7 @@ const scheduleMap: Record<Schedule, string> = {
 const scheduleColorMap: Record<Schedule, string> = {
   full_day_attendance: "success",
   morning_attendance: "yellow",
-  afternoon_attendance: "grey"
+  afternoon_attendance: "#FFB74D"
 }
 
 // ステータスに応じたボタンの色を返す

@@ -1,29 +1,27 @@
 <template>
-  <NuxtLink to="/dashboard">
-    <v-icon icon="mdi mdi-calendar-blank-outline"></v-icon>
-  </NuxtLink>
-  <v-btn @click="changeAttendance(attendanceList)">aaa</v-btn>
-  {{ events }}
-  {{ current }}
-  <v-calendar ref="calendar"
-              type="month"
-              :v-model="current"
-              :events="events"
-              color="primary"
-              >
-    <template #event="{ event }">
-        <div class="px-2 py-1 rounded bg-green text-center">
-          {{ scheduleToJapanese(event.title as Schedule) }}
-        </div>
-    </template>
-  </v-calendar>
+  <CalendarHeader   :on-next="next"
+                    :on-prev="prev"
+                    :on-today="today"
+                    :displayed-month="displayedMonth" />
+  <FullCalendar ref="calendar" :options="calendarOptions" />
+  <DialogSchedule v-model="dialog"  :item="item"
+                                    :attendance="attendance"
+                                    :current-event="currentEvent"
+                                    :events="events"
+                                    :set-event="setEvent"
+                                    :date="date"
+                                    :type="type"
+                                    :calendar="calendar"/>
 </template>
-
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { useDate } from 'vuetify'
-import type { Attendance, EventItem, Schedule } from '~/types';
+import type { Attendance, AttendancesResponse, EventItem, Schedule } from '~/types';
+import FullCalendar from '@fullcalendar/vue3'
+import dayGridPlugin from '@fullcalendar/daygrid'
+import timeGridPlugin from '@fullcalendar/timegrid'
+import interactionPlugin from '@fullcalendar/interaction'
+import allLocales from '@fullcalendar/core/locales-all'
 
 definePageMeta({
   middleware: [
@@ -31,61 +29,51 @@ definePageMeta({
   ],
 });
 
-const { selectedDate } = useDatePicker()
-
+const config = useRuntimeConfig();
+const { getAuthHeaders } = useApiClient()
+const route = useRoute()
 const calendar = ref()
-const current = ref('2025-09-02')
-const attendanceList = [{
-  id: 10,
-  date: "2025-06-13",
-  schedule: "full_day_attendance",
-  attendances_status: "present",
-  remarks: "",
-  user_id: 7,
-  group_id: 2,
-  created_at: "2025-05-29T18:47:24.379+09:00",
-  updated_at: "2025-05-29T18:47:24.379+09:00",
-  user: {
-    id: 7,
-    provider: "email",
-    uid: "brittney_brekke@collins-kling.test",
-    allow_password_change: false,
-    user_name: "野村 明日香",
-    email: "brittney_brekke@collins-kling.test",
-    avatar_image: {
-      url: "/uploads/user/avatar_image/7/cat.jpg"
-    }
-  }},
-{
-  id: 10,
-  date: "2025-06-20",
-  schedule: "full_day_attendance",
-  attendances_status: "present",
-  remarks: "",
-  user_id: 7,
-  group_id: 2,
-  created_at: "2025-05-29T18:47:24.379+09:00",
-  updated_at: "2025-05-29T18:47:24.379+09:00",
-  user: {
-    id: 7,
-    provider: "email",
-    uid: "brittney_brekke@collins-kling.test",
-    allow_password_change: false,
-    user_name: "野村 明日香",
-    email: "brittney_brekke@collins-kling.test",
-    avatar_image: {
-      url: "/uploads/user/avatar_image/7/cat.jpg"
-    },
+const displayedMonth = ref()
+const events = ref<EventItem[]>([])
+const userId = Number(route.query.user_id)
+const groupId = Number(route.query.group_id)
+const currentStart = ref('')
+const currentEnd = ref('')
+const dialog = ref(false)
+const item = ref<Attendance | null>()
+const attendance = ref()
+const currentEvent = ref()
+const date = ref()
+const type = ref("edit")
+
+
+onMounted(() => {
+  getCalendar(currentStart.value, currentEnd.value, userId, groupId)
+})
+
+async function getCalendar(startDate: string, endDate: string, userId: number, groupId: number): Promise<void> {
+  try {
+    const response: AttendancesResponse = await $fetch(`${config.public.apiBase}/api/v1/attendances/calendar`, {
+      headers: getAuthHeaders(),
+      query: {
+        start_date: startDate,
+        end_date: endDate,
+        user_id: userId,
+        group_id: groupId
+      }
+    })
+
+    attendance.value = response.attendances
+    const eventArray =  changeAttendance(response)
+    events.value = eventArray
+    reloadCalendarEvents()
+  } catch (error) {
+    console.error('APIエラー', error)
   }
-}]
+}
 
-const events: Ref<EventItem[]> = ref([]);
-
-function changeAttendance(value: any) {
-  value.forEach((item: Attendance) => {
-    const event = setAttendance(item)
-    events.value?.push(event);
-  });
+function changeAttendance(value: any): EventItem[] {
+  return value.attendances.map((item: Attendance) => setEvent(item))
 }
 
 const scheduleMap: Record<Schedule, string> = {
@@ -94,11 +82,16 @@ const scheduleMap: Record<Schedule, string> = {
   afternoon_attendance: "午後参加"
 }
 
-function setAttendance(value: Attendance): EventItem {
+function setEvent(value: Attendance): EventItem {
   return {
-    title: value.schedule,
+    title: scheduleToJapanese(value.schedule),
     start: new Date(value.date),
     end: new Date(value.date),
+    allDay: true,
+    color: btnColor(value.schedule),
+    extendedProps: {
+      id: value.id
+    }
   };
 }
 
@@ -107,4 +100,117 @@ function scheduleToJapanese(schedule: Schedule): string{
     return scheduleMap[schedule]
 }
 
+// ステータスに応じたボタンの色を返す
+function btnColor(scheduleStatus: Schedule): string{
+  return scheduleColorMap[scheduleStatus]
+}
+
+const scheduleColorMap: Record<Schedule, string> = {
+  full_day_attendance: "#4CAF50",
+  morning_attendance: "#FDD835",
+  afternoon_attendance: "orange"
+}
+
+// カレンダーのイベントを更新
+function reloadCalendarEvents() {
+  const api = calendar.value?.getApi()
+  if (api) {
+    api.removeAllEvents()
+    api.addEventSource(events.value)
+  }
+}
+
+function next() {
+  calendar.value.getApi().next()
+}
+
+function prev() {
+  calendar.value.getApi().prev()
+}
+
+function today() {
+  calendar.value.getApi().today()
+}
+
+const calendarOptions = {
+  plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
+  initialView: 'dayGridMonth', // 週表示（終日含む）
+  headerToolbar: {
+    left: '',
+    center: '',
+    end: ''
+  },
+  locales: allLocales,
+  locale: 'ja',
+  allDaySlot: true,
+  editable: true,
+  dayCellContent: function (arg: any) {
+    return { html: String(arg.date.getDate()) }
+  },
+  dayCellDidMount(info: any) {
+  if (info.isToday) {
+    info.el.style.backgroundColor = '#ffebee'
+    console.log('今日の日:', info.date)
+  }},
+  dateClick(info: any) {
+    if (checkEvents(info.date)) {
+      type.value = "edit"
+      item.value = findByDateAttendance(info.date)
+    } else {
+      item.value = null
+      date.value = info.dateStr
+      type.value = "new"
+    }
+    dialog.value = true
+    console.log('日付クリック:', info.date)
+  },
+  eventClick(info: any) {
+    dialog.value = true
+    date.value = null
+    currentEvent.value = info.event
+    type.value = "edit"
+    item.value = findAttendance(info.event)
+    console.log("イベントクリック", info.event.extendedProps.id)
+  },
+  datesSet(info: any) {
+    displayedMonth.value = info.view.title
+    currentStart.value = info.startStr
+    currentEnd.value = info.endStr
+    getCalendar(currentStart.value, currentEnd.value, userId, groupId)
+  },
+  events: events.value,
+}
+
+function findAttendance(event: EventItem) {
+  const eventAttendance = attendance.value?.find((a: { id: number; }) => a.id === event.extendedProps.id)
+  if (eventAttendance) {
+    return eventAttendance
+  }
+}
+
+function findByDateAttendance(date: Date) {
+  const event = events.value.find(e => {
+    const d1 = new Date(e.start)
+    return (
+      d1.getFullYear() === date.getFullYear() &&
+      d1.getMonth() === date.getMonth() &&
+      d1.getDate() === date.getDate()
+    )
+  })
+
+  if (event) {
+    return findAttendance(event)
+  }
+}
+
+function checkEvents(date: Date): boolean {
+  return events.value.some(e => {
+    const d1 = new Date(e.start)
+    return (
+      d1.getFullYear() === date.getFullYear() &&
+      d1.getMonth() === date.getMonth() &&
+      d1.getDate() === date.getDate()
+    )
+  })
+}
 </script>

@@ -1,7 +1,7 @@
 class Api::V1::AttendancesController < ApplicationController
     before_action :authenticate_user!
     before_action :set_attendance, only: [:update, :destroy]
-    before_action :validate_date, only: [:index, :calendar]
+    before_action :validate_date, only: [:index]
     before_action :validate_user_id, only: [:calendar]
     before_action :validate_group_id, only: [:index, :calendar]
 
@@ -43,12 +43,11 @@ class Api::V1::AttendancesController < ApplicationController
 
     def calendar
       begin
-        day = Date.strptime(params[:date], '%Y-%m-%d')
+        start_date = Date.strptime(params[:start_date], '%Y-%m-%d')
+        end_date = Date.strptime(params[:end_date], '%Y-%m-%d')
       rescue ArgumentError
         return render json: { error: "日付の形式が不正です" }, status: :unprocessable_entity
       end
-      start_date = day.beginning_of_month
-      end_date = day.end_of_month
 
       group_id = params[:group_id]
       user_id = params[:user_id]

@@ -31,7 +31,6 @@ const { selectedDate, formatDate } = useDatePicker()
 const { attendances } = useAttendances()
 const { selectedGroup } = useSelectedGroup()
 
-
 const { data: groupDate } = await useFetch<GroupResponse>('/api/group')
 const { data: attendanceDate } = await useFetch<AttendancesResponse>('/api/attendance', {
   query: {

@@ -3,6 +3,10 @@ export interface LoginResponse {
   data: User
 }
 
+export interface UserResponse {
+    user: User
+}
+
 export interface User {
   id: number
   user_name: string
@@ -66,7 +70,12 @@ export type Schedule = "full_day_attendance" | "morning_attendance" | "afternoon
 
 // 月カレンダーイベント
 export interface EventItem {
-  title: Schedule;
+  title: string;
   start: Date;
   end: Date;
+  allDay: boolean;
+  color: string;
+  extendedProps: {
+    id: number
+  }
 };

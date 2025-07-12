@@ -3,7 +3,7 @@
             width="auto">
     <v-card width="500"
             style="max-width: 90vw;"
-            title="予定編集"
+            :title="type === 'new' ? '新規作成' : '予定編集'"
             class="pa-10">
       <v-form @submit.prevent="onSubmit()">
         <div class="py-5">
@@ -27,8 +27,8 @@
                       maxlength="10"
                       :counter="10"
                       ></v-text-field>
-        <v-btn type="submit">
-          編集
+        <v-btn type="submit" class="me-3">
+          {{ type === "new" ? '新規作成' : "編集" }}
         </v-btn>
         <v-btn class="ms-auto"
               text="閉じる"

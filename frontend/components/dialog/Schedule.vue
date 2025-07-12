@@ -14,22 +14,22 @@
             {{ date }}
           </v-chip>
         </div>
-        <v-select
+        <v-select v-if="item"
           v-model="editItem.schedule"
           label="参加予定"
           :items="scheduleList"
           variant="outlined"
-          :readonly="isNotCurrentUser()"
+          :readonly="isNotCurrentUser(item?.user.id)"
         ></v-select>
-        <v-text-field v-model="editItem.remarks"
+        <v-text-field v-if="item" v-model="editItem.remarks"
                       label="備考"
                       type="text"
                       variant="outlined"
                       maxlength="10"
                       :counter="10"
-                      :readonly="isNotCurrentUser()"
+                      :readonly="isNotCurrentUser(item?.user.id)"
                       ></v-text-field>
-        <v-btn type="submit" class="me-3" :disabled="isNotCurrentUser()">
+        <v-btn v-if="item" type="submit" class="me-3" :disabled="isNotCurrentUser(item?.user.id)">
           {{ type === "new" ? '新規作成' : "編集" }}
         </v-btn>
         <v-btn class="ms-auto"
@@ -227,8 +227,8 @@ function onSubmit() {
 }
 
 // ログインしているユーザーではないときtrue
-function isNotCurrentUser(): boolean {
-  return userId !== currentUser.value?.id
+function isNotCurrentUser(userId: number): boolean {
+  return userId !== currentUser.value?.id || userId !== currentUser.value?.id
 }
 
 </script>

@@ -49,7 +49,6 @@ async function createAttendance(date: string,
     })
 
     if (response.attendance) {
-      console.log(response)
       attendances.value?.attendances.unshift(response.attendance)
     }
   } catch (error) {

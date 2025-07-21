@@ -138,7 +138,6 @@ async function updateSchedule(attendanceId?: number,
       headers: getAuthHeaders(),
       body: attendanceParams
     })
-    console.log(response)
     const updated = response.attendance;
     const attendanceList = attendances.value?.attendances;
     if (props.currentEvent) {
@@ -207,7 +206,7 @@ function addEvent(event: EventItem) {
   if (api) {
     api.addEvent(event)
   } else {
-    console.log("calendarAPIがありません")
+    console.error("calendarAPIがありません")
   }
 }
 
@@ -221,7 +220,7 @@ function onSubmit() {
     if (props.date && editItem.schedule) {
       createAttendance(props.date, editItem.schedule, userId, groupId)
     } else {
-      console.log("dateがありません")
+      console.error("dateがありません")
     }
   }
 }

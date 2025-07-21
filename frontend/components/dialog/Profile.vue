@@ -92,7 +92,6 @@ function prevImage(event: Event) {
       const selectedFile = target.files[0]
       image.value = URL.createObjectURL(selectedFile)
       uploadFile.value = selectedFile
-      console.log(uploadFile.value)
   }
 }
 
@@ -117,7 +116,6 @@ async function updateUser(userName: string): Promise<void> {
       headers: getAuthHeaders(),
       body: formData
     })
-    console.log('アップロード結果:', response)
 
     currentUser.value = response.current_user
     const attendance = attendances.value?.attendances.find(att => att.user.id === editUser.id)
@@ -126,7 +124,7 @@ async function updateUser(userName: string): Promise<void> {
     }
     dialog.value = false
   } catch (error) {
-    console.log("APIエラー", error)
+    console.error("APIエラー", error)
   }
 }
 </script>

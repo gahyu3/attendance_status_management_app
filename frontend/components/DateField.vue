@@ -54,7 +54,6 @@ watch(formatDate, async () => {
 
 // グループ名と日付を指定して出席データを取得（クリックイベント用）
 async function getAttendance(date: string, groupId: number) {
-  console.log('リクエスト送信', date)
   try {
     const response: AttendancesResponse = await $fetch(`${config.public.apiBase}/api/v1/attendances`, {
       headers: getAuthHeaders(),
@@ -64,7 +63,6 @@ async function getAttendance(date: string, groupId: number) {
       }
     })
     if (response.attendances) {
-      console.log(response)
       attendances.value = response
     }
   } catch (error) {

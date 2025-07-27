@@ -141,9 +141,3 @@ async function updateUser(userName: string) {
   }
 }
 </script>
-
-<style>
-.fc-h-event .fc-event-main {
-  padding-left: 35px;
-}
-</style>

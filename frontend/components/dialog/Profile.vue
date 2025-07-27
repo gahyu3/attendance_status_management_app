@@ -53,6 +53,7 @@ const { getAuthHeaders } = useApiClient()
 const { currentUser } = useCurrentUser()
 const { attendances } = useAttendances()
 
+const localhost = ref('')
 const file = ref<HTMLInputElement | null>(null)
 const image = ref<string>("")
 const uploadFile = ref<File | null>(null)
@@ -67,7 +68,11 @@ watch(
   (user) => {
     if (user) {
       copyObject(user)
-      const imageUrl = `${config.public.apiBase}${user.avatar_image?.url}`
+      if (config.public.apiBase === "http://localhost:3000") {
+        localhost.value = `${config.public.apiBase}`
+      }
+
+      const imageUrl = `${localhost.value}${user.avatar_image?.url}`
 
       image.value = imageUrl
       originalImage.value = imageUrl

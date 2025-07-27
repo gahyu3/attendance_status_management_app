@@ -2,7 +2,7 @@
   <div>
     <v-menu :close-on-content-click="false">
       <template v-slot:activator="{ props }">
-        <div class="d-flex justify-center pb-1">
+        <div class="d-flex ms-8 pb-1">
           <v-btn v-bind="props" class="cursor-pointer">
             <client-only>{{ formatDate }}</client-only>
           </v-btn>
@@ -10,7 +10,7 @@
       </template>
       <v-date-picker v-model="selectedDate" color="primary"></v-date-picker>
     </v-menu>
-    <div class="d-flex justify-center pb-1">
+    <div class="d-flex pb-1">
       <v-btn rounded="0" size="small" class="rounded-s-xl" @click="dayBefore">-</v-btn>
       <v-btn rounded="0" size="small" class="px-8" @click="GetToday">今日</v-btn>
       <v-btn rounded="0" size="small" class="rounded-e-xl" @click="nextDay">+</v-btn>
@@ -54,7 +54,6 @@ watch(formatDate, async () => {
 
 // グループ名と日付を指定して出席データを取得（クリックイベント用）
 async function getAttendance(date: string, groupId: number) {
-  console.log('リクエスト送信', date)
   try {
     const response: AttendancesResponse = await $fetch(`${config.public.apiBase}/api/v1/attendances`, {
       headers: getAuthHeaders(),
@@ -64,7 +63,6 @@ async function getAttendance(date: string, groupId: number) {
       }
     })
     if (response.attendances) {
-      console.log(response)
       attendances.value = response
     }
   } catch (error) {

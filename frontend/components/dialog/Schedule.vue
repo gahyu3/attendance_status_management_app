@@ -19,7 +19,7 @@
           label="参加予定"
           :items="scheduleList"
           variant="outlined"
-          :readonly="isNotCurrentUser()"
+          :readonly="isNotCurrentUser(item?.user_id)"
         ></v-select>
         <v-text-field v-model="editItem.remarks"
                       label="備考"
@@ -27,9 +27,9 @@
                       variant="outlined"
                       maxlength="10"
                       :counter="10"
-                      :readonly="isNotCurrentUser()"
+                      :readonly="isNotCurrentUser(item?.user_id)"
                       ></v-text-field>
-        <v-btn type="submit" class="me-3" :disabled="isNotCurrentUser()">
+        <v-btn type="submit" class="me-3" :disabled="isNotCurrentUser(item?.user_id)">
           {{ type === "new" ? '新規作成' : "編集" }}
         </v-btn>
         <v-btn class="ms-auto"
@@ -62,7 +62,7 @@ const { selectedDate, formatDate } = useDatePicker()
 const { currentUser } = useCurrentUser()
 const { getAuthHeaders } = useApiClient()
 const { attendances } = useAttendances()
-const userId = Number(route.query.user_id)
+const queryUserId = Number(route.query.user_id)
 
 const scheduleList = [
   { title: "終日参加", value: "full_day_attendance"},
@@ -138,7 +138,6 @@ async function updateSchedule(attendanceId?: number,
       headers: getAuthHeaders(),
       body: attendanceParams
     })
-    console.log(response)
     const updated = response.attendance;
     const attendanceList = attendances.value?.attendances;
     if (props.currentEvent) {
@@ -207,7 +206,7 @@ function addEvent(event: EventItem) {
   if (api) {
     api.addEvent(event)
   } else {
-    console.log("calendarAPIがありません")
+    console.error("calendarAPIがありません")
   }
 }
 
@@ -221,13 +220,16 @@ function onSubmit() {
     if (props.date && editItem.schedule) {
       createAttendance(props.date, editItem.schedule, userId, groupId)
     } else {
-      console.log("dateがありません")
+      console.error("dateがありません")
     }
   }
 }
 
 // ログインしているユーザーではないときtrue
-function isNotCurrentUser(): boolean {
+function isNotCurrentUser(userId: number | undefined): boolean {
+  if (userId === undefined) {
+    return queryUserId !== currentUser.value?.id
+  }
   return userId !== currentUser.value?.id
 }
 

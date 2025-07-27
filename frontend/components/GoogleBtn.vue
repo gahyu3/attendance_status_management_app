@@ -16,7 +16,6 @@ const callback = (response: any) => {
   if (response) {
     googleLogin(response)
   }
-  console.log("Handle the response", response)
 }
 
 // const login = () => {

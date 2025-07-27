@@ -24,7 +24,6 @@ async function getAttendance(date: string, groupId: number): Promise<void> {
       }
     })
     if (response.attendances) {
-      console.log(response)
       attendances.value = response
     }
   } catch (error) {

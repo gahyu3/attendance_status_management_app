@@ -58,9 +58,9 @@ function statusToJapanese(status: Status): string{
     return statusMap[status]
 }
 
-const statusList: Status[]  = ["present", "away", "before", "finished"]
+const statusList: Status[]  = ["before", "present", "away", "finished"]
 
-// ステータスをトグルする（present → away → before → finished）
+// ステータスをトグルする（before → away → present → finished）
 function changeStatus(currentStatus: Status): Status{
   const currentIndex = statusList.indexOf(currentStatus)
   const nextIndex = (currentIndex + 1) % statusList.length

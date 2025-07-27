@@ -150,7 +150,6 @@ const calendarOptions = {
   dayCellDidMount(info: any) {
   if (info.isToday) {
     info.el.style.backgroundColor = '#ffebee'
-    console.log('今日の日:', info.date)
   }},
   dateClick(info: any) {
     if (checkEvents(info.date)) {
@@ -162,7 +161,6 @@ const calendarOptions = {
       type.value = "new"
     }
     dialog.value = true
-    console.log('日付クリック:', info.date)
   },
   eventClick(info: any) {
     dialog.value = true
@@ -170,7 +168,6 @@ const calendarOptions = {
     currentEvent.value = info.event
     type.value = "edit"
     item.value = findAttendance(info.event)
-    console.log("イベントクリック", info.event.extendedProps.id)
   },
   datesSet(info: any) {
     displayedMonth.value = info.view.title

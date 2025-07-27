@@ -13,7 +13,9 @@
       <AttendanceBtnStatus :item="item" />
     </template>
     <template #item.calendar="{ item }">
-      <NuxtLink :to="{ path: '/calendar', query: { user_id: item.user.id, group_id: selectedGroup?.id } }">
+      <NuxtLink :to="{ path: '/calendar',
+                query: { user_id: item.user.id, group_id: selectedGroup?.id }}"
+                class="text-black">
         <v-icon icon="mdi mdi-calendar-blank-outline"></v-icon>
       </NuxtLink>
     </template>

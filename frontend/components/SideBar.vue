@@ -46,7 +46,6 @@ onMounted(() => {
     attendances.value = attendanceDate.value
     }
   if (groupDate.value?.groups) {
-    console.log(groupDate.value)
     selectedGroup.value = groupDate.value?.groups[0]
     }
   }
@@ -79,7 +78,6 @@ async function getAttendance(date: string, groupId: number): Promise<void> {
       }
     })
     if (response.attendances) {
-      console.log(response)
       attendances.value = response
     }
   } catch (error) {

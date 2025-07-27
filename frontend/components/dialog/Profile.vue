@@ -124,16 +124,16 @@ async function updateUser(userName: string) {
   }
 
   try {
-    const response: ProfileResponse = await $fetch(`${config.public.apiBase}/api/v1/profile`,{
+    const response: User = await $fetch(`${config.public.apiBase}/api/v1/profile`,{
       method: "PUT",
       headers: getAuthHeaders(),
       body: formData
     })
 
-    currentUser.value = response.current_user
+    currentUser.value = response
     const attendance = attendances.value?.attendances.find(att => att.user.id === editUser.id)
     if (attendance) {
-      attendance.user = response.current_user
+      attendance.user = response
     }
     dialog.value = false
   } catch (error) {

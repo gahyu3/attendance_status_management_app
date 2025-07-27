@@ -211,3 +211,9 @@ function checkEvents(date: Date): boolean {
   })
 }
 </script>
+
+<style>
+.fc-h-event .fc-event-main {
+  text-align: center;
+}
+</style>

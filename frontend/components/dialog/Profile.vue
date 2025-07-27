@@ -5,7 +5,7 @@
             style="max-width: 90vw;"
             title="ユーザー編集"
             class="pa-10">
-      <v-form v-if="editUser.user_name" @submit.prevent="updateUser(editUser.user_name)">
+      <v-form @submit.prevent="() => updateUserSafe()">
         <div class="d-flex justify-center">
           <v-avatar v-if="user?.avatar_image?.url" :image="image" size="120"/>
           <v-icon v-else
@@ -22,6 +22,7 @@
                       placeholder="太郎"
                       type="text"
                       variant="outlined"
+                      :rules="[v => !!v || '名前は必須です']"
                       :readonly="user?.id !== currentUser?.id"
                       ></v-text-field>
         <v-btn :disabled="user?.id !== currentUser?.id"
@@ -53,6 +54,7 @@ const { getAuthHeaders } = useApiClient()
 const { currentUser } = useCurrentUser()
 const { attendances } = useAttendances()
 
+const localhost = ref('')
 const file = ref<HTMLInputElement | null>(null)
 const image = ref<string>("")
 const uploadFile = ref<File | null>(null)
@@ -67,7 +69,11 @@ watch(
   (user) => {
     if (user) {
       copyObject(user)
-      const imageUrl = `${config.public.apiBase}${user.avatar_image?.url}`
+      if (config.public.apiBase === "http://localhost:3000") {
+        localhost.value = `${config.public.apiBase}`
+      }
+
+      const imageUrl = `${localhost.value}${user.avatar_image?.url}`
 
       image.value = imageUrl
       originalImage.value = imageUrl
@@ -101,7 +107,14 @@ function onDialogToggle() {
     Object.assign(editUser, props.user)
 }
 
-async function updateUser(userName: string): Promise<void> {
+// updateUserの引数を保証して実行
+function updateUserSafe() {
+  const name = editUser.user_name
+  if (typeof name !== 'string' || name.trim() === '') return
+  updateUser(name)
+}
+
+async function updateUser(userName: string) {
 
   const formData = new FormData()
   formData.append('user[user_name]', userName)
@@ -111,16 +124,16 @@ async function updateUser(userName: string): Promise<void> {
   }
 
   try {
-    const response: ProfileResponse = await $fetch(`${config.public.apiBase}/api/v1/profile`,{
+    const response: User = await $fetch(`${config.public.apiBase}/api/v1/profile`,{
       method: "PUT",
       headers: getAuthHeaders(),
       body: formData
     })
 
-    currentUser.value = response.current_user
+    currentUser.value = response
     const attendance = attendances.value?.attendances.find(att => att.user.id === editUser.id)
     if (attendance) {
-      attendance.user = response.current_user
+      attendance.user = response
     }
     dialog.value = false
   } catch (error) {
@@ -128,9 +141,3 @@ async function updateUser(userName: string): Promise<void> {
   }
 }
 </script>
-
-<style>
-.fc-h-event .fc-event-main {
-  padding-left: 35px;
-}
-</style>

@@ -128,3 +128,9 @@ async function updateUser(userName: string): Promise<void> {
   }
 }
 </script>
+
+<style>
+.fc-h-event .fc-event-main {
+  padding-left: 35px;
+}
+</style>

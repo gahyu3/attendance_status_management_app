@@ -5,7 +5,7 @@
             style="max-width: 90vw;"
             title="ユーザー編集"
             class="pa-10">
-      <v-form v-if="editUser.user_name" @submit.prevent="updateUser(editUser.user_name)">
+      <v-form @submit.prevent="() => updateUserSafe()">
         <div class="d-flex justify-center">
           <v-avatar v-if="user?.avatar_image?.url" :image="image" size="120"/>
           <v-icon v-else
@@ -22,6 +22,7 @@
                       placeholder="太郎"
                       type="text"
                       variant="outlined"
+                      :rules="[v => !!v || '名前は必須です']"
                       :readonly="user?.id !== currentUser?.id"
                       ></v-text-field>
         <v-btn :disabled="user?.id !== currentUser?.id"
@@ -106,7 +107,14 @@ function onDialogToggle() {
     Object.assign(editUser, props.user)
 }
 
-async function updateUser(userName: string): Promise<void> {
+// updateUserの引数を保証して実行
+function updateUserSafe() {
+  const name = editUser.user_name
+  if (typeof name !== 'string' || name.trim() === '') return
+  updateUser(name)
+}
+
+async function updateUser(userName: string) {
 
   const formData = new FormData()
   formData.append('user[user_name]', userName)

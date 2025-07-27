@@ -14,22 +14,22 @@
             {{ date }}
           </v-chip>
         </div>
-        <v-select v-if="item"
+        <v-select
           v-model="editItem.schedule"
           label="参加予定"
           :items="scheduleList"
           variant="outlined"
-          :readonly="isNotCurrentUser(item?.user.id)"
+          :readonly="isNotCurrentUser(item?.user_id)"
         ></v-select>
-        <v-text-field v-if="item" v-model="editItem.remarks"
+        <v-text-field v-model="editItem.remarks"
                       label="備考"
                       type="text"
                       variant="outlined"
                       maxlength="10"
                       :counter="10"
-                      :readonly="isNotCurrentUser(item?.user.id)"
+                      :readonly="isNotCurrentUser(item?.user_id)"
                       ></v-text-field>
-        <v-btn v-if="item" type="submit" class="me-3" :disabled="isNotCurrentUser(item?.user.id)">
+        <v-btn type="submit" class="me-3" :disabled="isNotCurrentUser(item?.user_id)">
           {{ type === "new" ? '新規作成' : "編集" }}
         </v-btn>
         <v-btn class="ms-auto"
@@ -62,7 +62,7 @@ const { selectedDate, formatDate } = useDatePicker()
 const { currentUser } = useCurrentUser()
 const { getAuthHeaders } = useApiClient()
 const { attendances } = useAttendances()
-const userId = Number(route.query.user_id)
+const queryUserId = Number(route.query.user_id)
 
 const scheduleList = [
   { title: "終日参加", value: "full_day_attendance"},
@@ -226,8 +226,11 @@ function onSubmit() {
 }
 
 // ログインしているユーザーではないときtrue
-function isNotCurrentUser(userId: number): boolean {
-  return userId !== currentUser.value?.id || userId !== currentUser.value?.id
+function isNotCurrentUser(userId: number | undefined): boolean {
+  if (userId === undefined) {
+    return queryUserId !== currentUser.value?.id
+  }
+  return userId !== currentUser.value?.id
 }
 
 </script>

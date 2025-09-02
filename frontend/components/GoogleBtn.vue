@@ -1,7 +1,16 @@
 <template>
   <ClientOnly>
     <GoogleLogin :callback="callback">
-      <v-btn color="green" prepend-icon="mdi mdi-google">ログイン</v-btn>
+      <v-btn color="green" prepend-icon="mdi mdi-google">
+          <span v-if="!lording">ログイン</span>
+          <span v-else>
+            <v-progress-circular
+              indeterminate
+              color="white"
+              size="20"
+            ></v-progress-circular>
+          </span>
+      </v-btn>
     </GoogleLogin>
   </ClientOnly>
 </template>
@@ -50,7 +59,10 @@ const callback = (response: any) => {
 //   login
 // })
 
+const lording = ref(false)
+
 async function googleLogin(response: any) {
+  lording.value = true
   let tokenHeaders: Token = {
       'access-token': null,
       client: null,
@@ -90,6 +102,8 @@ async function googleLogin(response: any) {
 
   } catch (error) {
     console.error(error)
+  } finally {
+    lording.value = false
   }
 }
 
